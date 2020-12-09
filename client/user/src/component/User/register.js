@@ -1,44 +1,28 @@
 import React, { useState, useRef } from "react";
 import { Redirect, Link } from "react-router-dom";
+import { Form } from "react-bootstrap";
+import Axios from "axios";
+import config from "../../config/config.json";
 import "./user.css";
 export default function Register() {
-  const inputForm = useRef();
-  const [co, setCo] = useState("dumemememe");
-  const handleSubmit = async () => {
-    const form = inputForm.current;
-    //window.alert(`${form["firstname"].value} ${form["password"].value}`);
+  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [rePassword, setRePassword] = useState('');
 
-    const username = form["username"].value;
-    const fullName = form["fullName"].value;
-    const pass = form["password"].value;
-    const rePass = form["rePassword"].value;
-    const d = {
-      Name: username,
-      Pass: pass,
-      fullName: fullName,
-      rePass: rePass
-    };
-    const response = await fetch("http://localhost:5000/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(d),
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    window.alert(fullName)
+    Axios.post(`${config.base_path}/register`, { fullName, username, password, rePassword }).then(res => {
+      if (res.data.code === 0) {
+        alert("Register successful");
+      }
     })
-      .then((response) => response.json())
-      .then((data) => {
-        window.sessionStorage.setItem("token", data.token);
-        window.location.href = "http://localhost:3000";
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
-  if (window.sessionStorage.getItem("token")) {
-    return <Redirect push to={{ pathname: "/" }} />;
-  }
   return (
     <>
       <div id="logreg-forms">
-        <form ref={inputForm} className="form-signup">
+        <div className="form-signup">
           <div className="social-login">
             <button className="btn facebook-btn social-btn" type="button"><span><i className="fab fa-facebook-f"></i> Sign up with Facebook</span> </button>
           </div>
@@ -47,15 +31,15 @@ export default function Register() {
           </div>
 
           <p style={{ textAlign: "center" }}>OR</p>
-
-          <input type="text" id="user-name" className="form-control" placeholder="Full name" required="" autofocus="" label={"fullName"} name={"fullName"} />
-          <input type="email" id="user-email" className="form-control" placeholder="Username" required autofocus="" label={"username"} name={"username"} />
-          <input type="password" id="user-pass" className="form-control" placeholder="Password" required autofocus="" label={"password"} name={"password"} />
-          <input type="password" id="user-repeatpass" className="form-control" placeholder="Repeat Password" required autofocus="" label={"rePassword"} name={"rePassword"} />
-
-          <button className="btn btn-primary btn-block" type="submit"><i className="fas fa-user-plus" onClick={handleSubmit}></i> Sign Up</button>
+          <Form  onSubmit={handleSubmit}>
+          <Form.Control type="text"  className="form-control" placeholder="Full name" value = {fullName}  onChange={(e) => setFullName(e.target.value)}/>
+          <Form.Control type="text"  className="form-control" placeholder="Username"  value={username} onChange={(e) => setUsername(e.target.value)}/>
+          <Form.Control type="password"  className="form-control" placeholder="Password"  value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <Form.Control type="password" className="form-control" placeholder="Repeat Password"  value = {rePassword} onChange={(e) => setRePassword(e.target.value)}/>
+          <button className="btn btn-primary btn-block" type="submit"><i className="fas fa-user-plus"></i> Sign Up</button>
+          </Form>
           <div className = "bbb"><Link  to={'/login'}><i className="fas fa-angle-left" /> Back</Link></div>
-        </form>
+          </div>
       </div></>
   );
 }
