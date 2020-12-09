@@ -14,13 +14,13 @@ function App() {
     <>
       <Router>
         <Switch>
-          <Route path="/register">
+          <Route exact path="/register">
             <Register />
           </Route>
-          <Route path="/login">
+          <Route exact path="/login">
             <Login />
           </Route>
-          <Route path="/">
+          <Route exact path="/">
             <Home />
           </Route>
         </Switch>

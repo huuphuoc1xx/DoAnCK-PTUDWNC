@@ -24,11 +24,11 @@ function listUser({ listUsers }) {
   ];
   return (
     <>
-      <div >
+      <div>
         {listUser.map((user) => (
-        <Item user={user}></Item>
-      ))}</div>
-      
+          <Item user={user}></Item>
+        ))}
+      </div>
     </>
   );
 }

@@ -3,13 +3,14 @@ const jwt = require("jsonwebtoken");
 
 const userBUS = require("../bus/user");
 const { STATUS } = require("../utils/constant");
-const { responseWithStatus } = require("../utils/utils");
+const { responseWithStatus, responseWithData } = require("../utils/utils");
 
 module.exports = {
 	post: async (req, res, next) => {
 		const { username, password } = req.body;
 		try {
 			const user = await userBUS.findByUsername(username);
+			console.log(user)
 			if (!user) {
 				throw "Invalid Username"
 			} else {
@@ -22,7 +23,7 @@ module.exports = {
 					};
 					const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
 					res.cookie("jwt", token);
-					responseWithStatus(res, STATUS.SUCCESS);
+					responseWithData(res, STATUS.SUCCESS);
 				} else {
 					throw "Invalid password"
 				}
