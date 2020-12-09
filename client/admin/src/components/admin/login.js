@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Form } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import "./user.css";
+import "./admin.css";
 import Axios from "axios";
 import config from "../../config/config.json"
 
@@ -11,7 +11,7 @@ export default function Register() {
   const [err, setErr] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.alert(username)
+    
     Axios.post(`${config.base_path}/login`, { username, password }).then(res => {
       if (res.data.code === 0) {
         window.location.href = '/';

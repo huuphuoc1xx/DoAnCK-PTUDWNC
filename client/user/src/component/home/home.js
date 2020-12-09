@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import NavHome from "../Nav";
 import ListUser from "./listUer";
 import "./home.css";
+import Axios from "axios";
+import config from "../../config/config.json";
 import {
   BrowserRouter as Router,
   Redirect,
@@ -9,22 +11,14 @@ import {
 function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [listUers, setListUsers] = useState([]);
-  let token = window.sessionStorage.getItem("token");
+
   useEffect(() => {
-    fetch("http://localhost:5000", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    }).then((response) => response.json())
-      .then((data) => {
-        setIsLoaded(true);
-        setListUsers(data);
-        return;
-      });
-  }, []);
-  if (!token) {
-    return <Redirect push to={{ pathname: "/login" }} />;
-  } else {
-    if (!isLoaded) {
+    Axios.get(`${config.base_path}`).then(res => {
+          setIsLoaded(true);
+          setListUsers(res.data.data.listUser);
+        })},[]);
+
+    if (isLoaded) {
       return <>Loadding........</>;
     } else {
       return (
@@ -40,6 +34,5 @@ function Home() {
         </>
       );
     }
-  }
 }
 export default Home;
