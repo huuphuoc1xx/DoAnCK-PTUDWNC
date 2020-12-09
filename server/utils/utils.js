@@ -7,24 +7,26 @@ module.exports = {
   responseWithData: (res, data) => {
     res.json({
       code: 0,
-      data
+      data,
     });
   },
   dataMapper: (data, fields) => {
     const obj = {};
 
-    fields.forEach(field => {
-      if (data[field])
-        obj[field] = data[field]
+    fields.forEach((field) => {
+      if (data[field]) obj[field] = data[field];
     });
 
     return obj;
   },
-  commonModel: (db, TABLE, viewFields, changeFields) => {
+  commonModel: function (db, TABLE, viewFields, changeFields) {
     return {
       findAll: () => db.load(`SELECT ${viewFields} FROM ${TABLE}`),
       findByCondition: async (condition) => {
-        const row = await db.load(`SELECT ${viewFields} FROM ${TABLE} WHERE ?`, condition);
+        const row = await db.load(
+          `SELECT ${viewFields} FROM ${TABLE} WHERE ?`,
+          condition
+        );
         return row[0];
       },
       add: (entity) => {
@@ -34,7 +36,7 @@ module.exports = {
       edit: (entity) => {
         const changeData = this.dataMapper(entity, changeFields);
         return db.edit(TABLE, changeData, { id: entity.id });
-      }
-    }
-  }
-}
+      },
+    };
+  },
+};

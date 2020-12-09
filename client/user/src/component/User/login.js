@@ -5,7 +5,7 @@ import "./user.css";
 import Axios from "axios";
 import config from "../../config/config.json"
 
-export default function Register() {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
