@@ -12,7 +12,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    window.alert(fullName)
+    
     Axios.post(`${config.base_path}/register`, { fullName, username, password, rePassword }).then(res => {
       if (res.data.code === 0) {
         alert("Register successful");
