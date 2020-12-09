@@ -11,7 +11,7 @@ export default function Register() {
   const [err, setErr] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.alert(username)
+    
     Axios.post(`${config.base_path}/login`, { username, password }).then(res => {
       if (res.data.code === 0) {
         window.location.href = '/';
