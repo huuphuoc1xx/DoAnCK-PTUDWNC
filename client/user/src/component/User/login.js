@@ -5,6 +5,7 @@ import "./user.css";
 import Axios from "axios";
 import config from "../../config/config.json"
 
+Axios.defaults.withCredentials=true;
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

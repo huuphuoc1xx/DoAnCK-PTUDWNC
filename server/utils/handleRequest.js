@@ -18,7 +18,7 @@ module.exports = {
       if (typeof error === "number")
         utils.responseWithStatus(res, error)
       else
-        utils.responseWithStatus(res, STATUS.INTERNAL);
+        utils.responseWithStatus(res, "INTERNAL");
     }
   },
   handleWriteRequest: async ({ req, res, sourceInput, fields, io, resource }) => {
@@ -35,13 +35,13 @@ module.exports = {
           data[resource][fields[0]] = result.insertId;
         utils.responseWithData(res, data);
       } else
-        utils.responseWithStatus(res, STATUS.UNCHANGE);
+        utils.responseWithStatus(res, "UNCHANGE");
     } catch (error) {
       console.error(error);
       if (typeof error === "number")
         utils.responseWithStatus(res, error)
       else
-        utils.responseWithStatus(res, STATUS.INTERNAL);
+        utils.responseWithStatus(res, "INTERNAL");
     }
   },
 }

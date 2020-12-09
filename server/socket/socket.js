@@ -12,8 +12,11 @@ module.exports = server => {
 
   io.use((socket, next) => {
     passport.authenticate('jwt', (err, user) => {
-      if (user)
+      if (!err&&user)
+      { 
+        socket.request.user=user;
         next();
+      }
     })(socket.request, {}, next)
   });
 
