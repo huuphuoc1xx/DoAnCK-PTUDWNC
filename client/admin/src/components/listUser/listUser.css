@@ -1,0 +1,26 @@
+.containerE{
+    margin: 10px;
+    background-color: white;
+    color: black;
+}
+.containerUser{
+    display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+    justify-content: space-between;
+}
+.l{
+    font-size: 2rem;
+    line-height: 1;
+    text-align: center;
+    padding: 3rem;
+    background: mistyrose;
+    border: 3px solid tomato;
+    color: tomato;
+    margin: 6px;
+    
+}
+
+ul{
+    list-style-type:none;
+}
