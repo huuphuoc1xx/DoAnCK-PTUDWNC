@@ -1,10 +1,10 @@
 {
   "mysql":{
     "connectionLimit": 50,
-        "host": "127.0.0.1",
-        "port": 3306,
-        "user": "root",
-        "password": "1234",
-        "database": "caro"
+    "host": "167.71.195.5",
+    "port": 3306,
+    "user": "root",
+    "password": "aRLMEE6p3brdE8DU5ppbdcGV8wftmUgc",
+    "database": "todolist"
   }
 }
