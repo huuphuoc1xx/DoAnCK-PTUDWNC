@@ -7,5 +7,7 @@ const changeFields = [];
 
 module.exports = {
   ...utils.commonModel(db, TABLE, viewFields, changeFields),
-  findByUsername: (username) => this.findByCondition({ username: username }),
+  findByUsername: function (username) {
+    this.findByCondition({ username: username });
+  },
 };

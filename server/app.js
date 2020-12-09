@@ -6,8 +6,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors'); // cross-origin resource sharing
 
 const dbConfig = require('./config/db');
-const connectMongo = require('connect-mongo');
-const MongoStoreFactory = connectMongo(session);
 
 const passport = require('passport');
 require('./config/passport')(passport);
@@ -41,9 +39,6 @@ const sessionOptions = {
 	secret: 'secret',
 	resave: true,
 	saveUninitialized: true,
-	store: new MongoStoreFactory({
-		url: dbConfig.DB_URL_CONNECT
-	}),
 	cookie: { 
 		secure: true,
 		maxAge: 24 * 60 * 60 * 1000, 

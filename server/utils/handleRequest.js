@@ -1,31 +1,29 @@
 const { STATUS } = require("./constant");
-const constant = require("./constant");
-const { STATUS } = constant;
-const helper = require("./helper")
+const utils = require("./utils")
 
 
 module.exports = {
   handleReadRequest: async ({ req, res, sourceInput, fields, readFunc, resource }) => {
     let obj = {};
-    if (sourceInput) obj = helper.dataMapper(req[sourceInput], fields || []);
+    if (sourceInput) obj = utils.dataMapper(req[sourceInput], fields || []);
 
     try {
       const info = await readFunc(obj);
 
       const data = {};
       data[resource] = info;
-      helper.responseWithData(res, data)
+      utils.responseWithData(res, data)
     } catch (error) {
       console.error(error);
       if (typeof error === "number")
-        helper.responseWithStatus(res, error)
+        utils.responseWithStatus(res, error)
       else
-        helper.responseWithStatus(res, STATUS.INTERNAL);
+        utils.responseWithStatus(res, STATUS.INTERNAL);
     }
   },
   handleWriteRequest: async ({ req, res, sourceInput, fields, io, resource }) => {
     const obj = {};
-    if (sourceInput) helper.dataMapper(req[sourceInput], fields);
+    if (sourceInput) utils.dataMapper(req[sourceInput], fields);
 
     try {
       const result = await io(obj);
@@ -35,15 +33,15 @@ module.exports = {
         data[resource] = req.body;
         if (result.insertId)
           data[resource][fields[0]] = result.insertId;
-        helper.responseWithData(res, data);
+        utils.responseWithData(res, data);
       } else
-        helper.responseWithStatus(res, STATUS.UNCHANGE);
+        utils.responseWithStatus(res, STATUS.UNCHANGE);
     } catch (error) {
       console.error(error);
       if (typeof error === "number")
-        helper.responseWithStatus(res, error)
+        utils.responseWithStatus(res, error)
       else
-        helper.responseWithStatus(res, STATUS.INTERNAL);
+        utils.responseWithStatus(res, STATUS.INTERNAL);
     }
   },
 }
