@@ -13,7 +13,7 @@ const addUser = (user, socketId) => {
   }
 }
 const addRoom = (room, user, socketId) => {
-  const index = listRoom.findIndex(value => value.room === room&&value.userId===user.id);
+  let index = listRoom.findIndex(value => value.room===room);
   if (index < 0 || isNaN(index)) {
     const user_x  = {
       userId: user.id,
@@ -24,7 +24,7 @@ const addRoom = (room, user, socketId) => {
     let listUser = [user_x];
     listRoom.push({user_o:user_o, user_x:user_x, room: room, listUser:listUser, status:0});
   } else {
-    listRoom[index].room = room;
+    return false;
   }
 }
 const addRoomExits = (room, user, socketId) => {
@@ -33,9 +33,12 @@ const addRoomExits = (room, user, socketId) => {
     username: user.username,
     socketId: socketId,
   };
-  const index = listRoom.findIndex(value => value.room==room);
-  
-  listRoom[index].listUser.push(userAdd);
+  let index = listRoom.findIndex(value => value.room==room);
+  if(index>=0)
+  {
+    index = listRoom[index].listUser.findIndex(value => value.userId==user.id);
+    index==-1?listRoom[index].listUser.push(userAdd):null;
+  }
 }
 const removeUser = (userId) => {
   const index = listUser.findIndex(item => item.userId === userId);
@@ -109,6 +112,16 @@ const updateStatus = (room) => {
     listRoom = newListRoom;
   }
 }
+const deleteRoom = (user) => {
+  const index = listRoom.findIndex(value => value.user_x.userId==user.id);
+  if(index>=0)
+  {
+    let newListRoom = listRoom.slice(0,index);
+    newListRoom = [...newListRoom, listRoom.slice(index+1,listRoom.length)[0]];
+    listRoom = newListRoom;
+  }
+  return false;
+}
 const getRoomByUser = (socketId) => users.find((user) => user.socketId === socketId);
 module.exports = {
   addUser,
@@ -123,5 +136,6 @@ module.exports = {
   addPlayer,
   getUserPlay,
   checkCurState,
-  updateStatus
+  updateStatus,
+  deleteRoom
 }

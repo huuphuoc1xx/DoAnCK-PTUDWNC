@@ -81,6 +81,10 @@ module.exports = (server) => {
         }
       }
     });
+    socket.on('OUT_GAME', async () => {
+      const result = manager.deleteRoom(user);
+      console.log(result);
+    })
     socket.on('GET_NEW_CHESSBOARD', async () => {
       const result = manager.getRoom();
       socket.emit('GET_NEW_CHESSBOARD', result);

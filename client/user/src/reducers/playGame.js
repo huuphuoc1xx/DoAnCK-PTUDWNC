@@ -30,10 +30,11 @@ export function playReduce(state = {},action){
                 squares: [...state.squares]
             } 
         case PLAYGAMECONTANTS.USER_PLAY_GAME:
-            if(state.room!=action.data.room) state.listUserPlay = [];
+            console.log("USER_PLAY_GAME", action.data);
+            console.log("CUR_USER_PLAY", state.listUserPlay);
             return{
                 ...state,
-                listUserPlay: [...state.listUserPlay, ...action.data.list],
+                listUserPlay: action.dat,
                 room: action.data.room
             }
         case PLAYGAMECONTANTS.GET_NEW_CHESSBOARD:

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Game from './game/game';
 import NavHome from "../Nav";
 import './playGame.css';
@@ -21,6 +21,12 @@ export const PlayGame = () => {
     dispatch({ type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.START_PLAY, data: room });
   }
 
+  
+  useEffect(() => {
+    return function outRoom() {
+      dispatch({ type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.OUT_GAME });
+    }
+  });
   if(!userPlayer)
     return <Redirect to="/"/>;
   return (
