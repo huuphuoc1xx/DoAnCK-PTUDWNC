@@ -8,10 +8,11 @@ const { responseWithStatus } = require("../utils/utils");
 module.exports = {
 	post: async (req, res, next) => {
 		const { username, password } = req.body;
+		console.log(`username: ${username} pass: ${password} `)
 		try {
 			const user = await userBUS.findByUsername(username);
 			if (!user) {
-				throw "Invalid Username"
+				throw "Invalid Username";
 			} else {
 				const isMatch = await bcrypt.compare(password, user.password);
 

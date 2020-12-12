@@ -16,7 +16,7 @@ const AuthProvider = (props) => {
       else if (res.data.code === 1) {
        
         window.location.href = '/login';
-        // return <Redirect to = '/login'/>
+         return <Redirect to = '/login'/>
         
       }
     }).catch(err => console.log(err));
