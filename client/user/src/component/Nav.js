@@ -3,25 +3,16 @@ import { Navbar } from "react-bootstrap";
 import { BrowserRouter as Router, Link, Redirect } from "react-router-dom";
 import Axios from "axios";
 import config from "../config/config.json";
+import { useDispatch, useSelector } from 'react-redux';
 function Nav(props) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [reDirect, setRedirect] = useState(false);
-  useEffect(() => {
-    Axios.get(`${config.base_path}`)
-         .then((res) => {
-            if (res.data.code !== 0) {
-                setIsLoading(true);
-            }else{
-              setRedirect(<Redirect to="/login" />);
-            }
-          }).catch((err) => {
-        console.log(err);
-        window.location.href = `/login`;
-        setRedirect(<Redirect to="/login" />);
-      });
-  }, []);
-  return isLoading ? (
-    reDirect ||
+  const [redirect, setRedirect] = useState(false);
+  const user = useSelector(state => state.login.user);
+  const dispatch = useDispatch();
+  const logOut = () => {
+  
+  }
+  if (redirect) return redirect;
+  return (
     <>
       <Navbar
         style={{
@@ -36,12 +27,12 @@ function Nav(props) {
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
-          <Link to={`/login`}>Logout</Link>
+          <Link onclick = {logOut} to={`/login`} >{}</Link>
         </Navbar.Collapse>
       </Navbar>
-      <div >{props.children}</div>
+      <div>{props.children}</div>
     </>
-  ) : <></>;
+  );
 }
 
 export default Nav;
