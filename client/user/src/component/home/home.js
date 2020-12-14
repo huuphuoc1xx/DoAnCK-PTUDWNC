@@ -2,11 +2,42 @@ import React, { useState, useEffect } from "react";
 import NavHome from "../Nav";
 import ListUser from "./listUser";
 import "./home.css";
-function Home() {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [listUser, setListUser] = useState([]);
+import config from "../../config/config.json";
+import Cookies from "js-cookie";
+import { useBeforeunload } from "react-beforeunload";
 
-  if (isLoaded) return <>Loadding........</>;
+import socketIOClient from "socket.io-client";
+
+function Home() {
+  const [listUser, setListUser] = useState([]);
+  const [socket, setSocket] = useState();
+
+  useEffect(() => {
+    const socket = socketIOClient(`${config.socket}`, {
+      path: "/socket",
+      query: { token: Cookies.get("jwt") },
+    });
+    socket.on("online", (data) => {
+      setListUser(JSON.parse(data));
+    });
+    socket.on("list", (data) => {
+      setListUser(JSON.parse(data));
+    });
+    socket.on("offline", (data) => {
+      setListUser(JSON.parse(data));
+    });
+    setSocket(socket);
+  }, []);
+  useBeforeunload(() => {
+    try {
+      socket.emit("offline");
+      return "asdf";
+
+    } catch (error) {
+      console.log(error);
+      return "asdf";
+    }
+  });
   return (
     <>
       <NavHome>
