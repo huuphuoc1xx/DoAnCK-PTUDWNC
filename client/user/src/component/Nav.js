@@ -6,11 +6,18 @@ import config from "../config/config.json";
 import { useDispatch, useSelector } from 'react-redux';
 function Nav(props) {
   const [redirect, setRedirect] = useState(false);
-  const user = useSelector(state => state.login.user);
-  const dispatch = useDispatch();
-  const logOut = () => {
-  
-  }
+  useEffect(() => {
+    // Axios.get(`${config.base_path}`)
+    //   .then((res) => {
+    //     if (res.data.code !== 0) {
+    //       setIsLoading(true);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setRedirect(<Redirect to="/login" />);
+    //   });
+  }, []);
   if (redirect) return redirect;
   return (
     <>

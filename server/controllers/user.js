@@ -11,7 +11,7 @@ module.exports = {
   },
   getById: function (req, res, next) {
     handleReadRequest({
-      req, res, sourceInput: "params",
+      req, res, sourceInput: "user",
       fields: ["id"],
       readFunc: userBUS.findByCondition,
       resource: "user"

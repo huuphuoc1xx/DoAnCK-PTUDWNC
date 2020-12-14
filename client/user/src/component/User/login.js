@@ -4,8 +4,6 @@ import { Redirect, Link, useLocation } from "react-router-dom";
 import "./user.css";
 import Axios from "axios";
 import config from "../../config/config.json"
-import { useDispatch, useSelector } from 'react-redux';
-import  { userAction } from '../../actions/users';
 Axios.defaults.withCredentials=true;
 export default function Login() {
   const [username, setUsername] = useState("");

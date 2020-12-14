@@ -9,6 +9,7 @@ const ensureAuthenticated = function (req, res, next) {
     if (err || !user) {
       responseWithStatus(res, "UNAUTHORIZE");
     } else {
+      req.user=user;
       next();
     }
   })(req, res, next);

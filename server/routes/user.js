@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.get('/', authentication.ensureAuthenticated, controller.getAll);
 
-router.get('/:id', authentication.ensureAuthenticated, controller.getById);
+router.get('/profile', authentication.ensureAuthenticated, controller.getById);
 
 module.exports = router;
