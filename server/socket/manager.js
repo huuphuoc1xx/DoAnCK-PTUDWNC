@@ -12,7 +12,7 @@ const addUser = (user, socketId) => {
 }
 
 const removeUser = (userId) => {
-  const index = listUser.findIndex(item => item.userId != userId);
+  const index = listUser.findIndex(item => item.userId === userId);
   listUser.splice(index, 1);
 }
 
@@ -22,7 +22,7 @@ const getUserSocketId = (userId) => {
 }
 
 const getListOnline = () => {
-  return listUser.map(item => { return { id: item.userId, username: item.username } });
+  return listUser.map(item => { return { userId: item.userId, username: item.username } });
 }
 module.exports = {
   addUser,
