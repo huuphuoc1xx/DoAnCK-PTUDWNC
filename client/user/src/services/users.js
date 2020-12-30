@@ -8,7 +8,7 @@ function login(username, password){
         } else {
           return null;
         }
-      }).catch(console.log('err'))
+      }).catch(err => console.log(err))
 }
 
 function register(username, name, password){
@@ -18,7 +18,13 @@ function register(username, name, password){
         }else return 0;
       })
 }
-
+function autho(){
+  return Axios.get(`${config.base_path}/users/profile`).then(res =>{
+    if (res.data.code === 0) {
+      return res.data.data.user;
+    }else return 0;
+  }).catch(err =>alert(err))
+}
 function logout(){
 
 }
@@ -26,5 +32,6 @@ function logout(){
 export const userService = {
     login,
     register,
-    logout
+    logout,
+    autho
 }
