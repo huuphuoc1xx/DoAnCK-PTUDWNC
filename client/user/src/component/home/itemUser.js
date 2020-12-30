@@ -6,12 +6,12 @@ function User({ user }) {
         <div>
           <div className="user">
             <img
-              className="avater"
-              src="https://nguoinoitieng.tv/images/nnt/97/0/bcjl.jpg"
+              className="avatar"
+              src="https://giupban.com.vn/wp-content/uploads/2019/09/hinh-anh-hot-girl-de-thuong-19.jpg"
             />
             <div className="userName">{user.username}</div>
           </div>
-          <hr></hr>
+          <br/>
         </div>
       }
     </>

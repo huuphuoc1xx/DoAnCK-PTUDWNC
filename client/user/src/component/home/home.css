@@ -1,63 +1,60 @@
-.colkk{
-    height: 178px;
-    width: 285px;
-    border-style: dashed;
-    border-width: 1px;
-    border-color: #ff4d4d;
-    position: relative;
-    border-radius: 5px;
+.colkk {
+  height: 178px;
+  width: 285px;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: #ff4d4d;
+  position: relative;
+  border-radius: 5px;
 }
-.oneCol{
-    margin-bottom: 20px;
+.oneCol {
+  margin-bottom: 20px;
 }
-.btAdd{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    background: #ff4d4d
+.btAdd {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ff4d4d;
 }
-.card{
-    width: 18rem 
+.card {
+  width: 18rem;
 }
-.cardImage{
-    height: 100px;
-    background-image: url('https://i.pinimg.com/originals/43/63/d7/4363d7d31c18589833c7e0fc48c2d8f5.jpg');
+.cardImage {
+  height: 100px;
+  background-image: url("https://i.pinimg.com/originals/43/63/d7/4363d7d31c18589833c7e0fc48c2d8f5.jpg");
 }
-.itemUser{
-    
+.containerE {
+  display: flex;
+  flex-direction: row;
+  background-color: "#ffffff";
 }
-.containerE{
-    display: flex;
-    flex-direction: row;
-    background-color: '#ffffff'
-  }
-  .divListUser{
-    
-    width: 350px;
-    line-height: 20px;
-    height: 575px;
-    overflow-y: scroll;
-  }
-  .textDiv{
-      padding-left: 20px;
-  }
-  .user{
-    display: flex;
-    flex-direction: row;
-    -ms-flex-align: center;
-    align-items: center;
-  }
-  .userName{
-      margin-left: 20px;
-      justify-content: center;
-      font-size: larger;
-      font-weight: 400;
-      
-  }
-.avater{
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    margin-left: 20px;
+.divListUser {
+  line-height: 20px;
+  height: 575px;
+  overflow-y: scroll;
+  
+  background-color:white;
+}
+.textDiv {
+  padding-left: 20px;
+}
+.user {
+  display: flex;
+  flex-direction: row;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-top: 10px;
+}
+.userName {
+  margin-left: 20px;
+  justify-content: center;
+  font-size: small;
+  font-weight: 400;
+}
+.avatar {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: 20px;
 }

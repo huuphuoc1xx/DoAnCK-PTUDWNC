@@ -4,11 +4,12 @@ import { Redirect, Link, useLocation } from "react-router-dom";
 import "./user.css";
 import Axios from "axios";
 import config from "../../config/config.json"
+import { useDispatch, useSelector } from 'react-redux';
+import { userAction } from '../../actions/users';
 Axios.defaults.withCredentials=true;
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
   
   const dispatch = useDispatch()
   const location = useLocation();
@@ -19,19 +20,9 @@ export default function Login() {
     e.preventDefault();
     if(username&&password)
     {
-      const { from } = location.state || { from: { pathname: "/" } };
+      const from = '/';
       dispatch(userAction.login(username, password,from));
-      window.location.href = '/';
     }
-    // Axios.post(`${config.base_path}/login`, { username, password }).then(res => {
-    //   if (res.data.code === 0) {
-    //     window.location.href = '/';
-        
-    //   } else {
-    //     setErr(res.data.data.message);
-    //   }
-    //   alert(username);
-    // }).catch(setErr("Login faild!"))
   };
 
   return (

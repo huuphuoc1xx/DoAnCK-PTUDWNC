@@ -15,7 +15,6 @@ module.exports = (server) => {
       optionsSuccessStatus: 200,
     },
   });
-
   io.use((socket, next) => {
     passport.authenticate("jwt", (err, user) => {
       if (!err && user) {
