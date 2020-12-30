@@ -1,6 +1,5 @@
 import Axios from "axios";
 import config from "../config/config.json";
-
 const { createContext, useContext, useEffect, useState } = require("react");
 
 export const AuthContext = createContext();

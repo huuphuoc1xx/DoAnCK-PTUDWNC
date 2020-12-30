@@ -1,0 +1,129 @@
+.cot1 {
+  border: cyan 10px;
+}
+
+.row {
+  margin-top: 20px;
+  height: 600px;
+  background-color: darksalmon;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+  align-items: center;
+}
+
+.status {
+  margin-bottom: 10px;
+}
+
+ol,
+ul {
+  padding-left: 30px;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.status {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: large;
+}
+
+.square {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 30px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 33px;
+}
+.winner {
+  background: rgb(230, 12, 12);
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 20px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 50px;
+  color: brown;
+}
+.winner:focus {
+  outline: none;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-info {
+  margin-left: 20px;
+}
+li {
+  margin: 3px;
+}
+.listButton {
+  width: 200px;
+}
+.flex-container{
+  display: flex;
+  align-items: stretch;
+  height: 575px;
+}
+.flex-game{
+  background-color: white;
+  margin-right: 3px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+  
+}
+.flex-chat{
+  background-color: white;
+  margin-right: 3px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+  flex-grow: 3;
+}
+.flex-user{
+  background-color: white;
+  margin-right: 3px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+  flex-grow: 1;
+}

@@ -5,7 +5,7 @@ import Axios from "axios";
 import config from "../../config/config.json";
 import "./user.css";
 export default function Register() {
-  const [fullName, setFullName] = useState('');
+  const [name, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
@@ -13,7 +13,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    Axios.post(`${config.base_path}/register`, { fullName, username, password, rePassword }).then(res => {
+    Axios.post(`${config.base_path}/register`, {  username, name, password }).then(res => {
       if (res.data.code === 0) {
         alert("Register successful");
       }
@@ -32,7 +32,7 @@ export default function Register() {
 
           <p style={{ textAlign: "center" }}>OR</p>
           <Form  onSubmit={handleSubmit}>
-          <Form.Control type="text"  className="form-control" placeholder="Full name" value = {fullName}  onChange={(e) => setFullName(e.target.value)}/>
+          <Form.Control type="text"  className="form-control" placeholder="Full name" value = {name}  onChange={(e) => setFullName(e.target.value)}/>
           <Form.Control type="text"  className="form-control" placeholder="Username"  value={username} onChange={(e) => setUsername(e.target.value)}/>
           <Form.Control type="password"  className="form-control" placeholder="Password"  value={password} onChange={(e) => setPassword(e.target.value)}/>
           <Form.Control type="password" className="form-control" placeholder="Repeat Password"  value = {rePassword} onChange={(e) => setRePassword(e.target.value)}/>

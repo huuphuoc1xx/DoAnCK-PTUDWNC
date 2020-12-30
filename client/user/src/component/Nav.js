@@ -3,6 +3,7 @@ import { Navbar } from "react-bootstrap";
 import { BrowserRouter as Router, Link, Redirect } from "react-router-dom";
 import Axios from "axios";
 import config from "../config/config.json";
+import { useDispatch, useSelector } from 'react-redux';
 function Nav(props) {
   const [redirect, setRedirect] = useState(false);
   useEffect(() => {
@@ -33,7 +34,7 @@ function Nav(props) {
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
-          <Link to={`/login`}>Logout</Link>
+          <Link onclick = {logOut} to={`/login`} >{}</Link>
         </Navbar.Collapse>
       </Navbar>
       <div>{props.children}</div>
