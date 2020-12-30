@@ -3,8 +3,8 @@
     "connectionLimit": 50,
     "host": "167.71.195.5",
     "port": 3306,
-    "user": "root",
-    "password": "aRLMEE6p3brdE8DU5ppbdcGV8wftmUgc",
+    "user": "sub",
+    "password": "6jIXbKutzh",
     "database": "todolist"
   }
 }
