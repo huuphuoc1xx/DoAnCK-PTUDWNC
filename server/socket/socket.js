@@ -3,6 +3,7 @@ const passportStrategy = require("../config/passport");
 const manager = require("./manager");
 const { startGame, updateGame } = require('./useDatabse');
 passportStrategy(passport);
+const cors = require("cors");
 
 module.exports = (server) => {
   const socket = require("socket.io");

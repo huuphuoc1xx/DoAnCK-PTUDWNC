@@ -35,7 +35,7 @@ const addRoomExits = (room, user, socketId) => {
   listRoom[index].user_oo = user_o;
 }
 const removeUser = (userId) => {
-  const index = listRoom.findIndex(item => item.userId === userId);
+  const index = listUser.findIndex(item => item.userId === userId);
   listUser.splice(index, 1);
 }
 
