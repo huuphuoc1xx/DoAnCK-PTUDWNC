@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
-import '../playGame.css';
-import Board from './board';
+import React from 'react';
+import '../PlayGame.css';
+import Board from './Board';
 import { useDispatch, useSelector } from 'react-redux';
 import { playAction } from '../../../actions/playGame';
 function Game({player}) {

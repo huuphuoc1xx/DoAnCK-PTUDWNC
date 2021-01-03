@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import Item from "./itemUser";
-import './home.css';
+import Item from "./ItemUser";
+import './Home.css';
 import { useSelector } from 'react-redux';
 function ListUser() {
   let listUser = false;
   listUser = useSelector(state => state.userReduce.listUser);
   return listUser?(
     <>
-      <div className = "divListUser">
+      <div className = "list-container">
         {listUser.map((user) => (
           <Item user={user}></Item>
         ))}

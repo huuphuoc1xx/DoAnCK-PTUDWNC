@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import Axios from "axios";
 import config from "../config/config.json";
 import { history } from '../helpers/history';
-import { userConstants } from '../constans/users.contants';
 import { userAction } from '../actions/users';
 const { createContext, useContext, useEffect, useState } = require("react");
 export const AuthContext = createContext();

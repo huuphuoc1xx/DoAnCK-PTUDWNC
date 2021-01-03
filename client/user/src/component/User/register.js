@@ -1,23 +1,33 @@
 import React, { useState, useRef } from "react";
-import { Redirect, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Form } from "react-bootstrap";
-import Axios from "axios";
-import config from "../../config/config.json";
 import "./user.css";
+import { userAction } from "../../actions/users";
+import { useDispatch } from "react-redux";
 export default function Register() {
   const [name, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
+  const [message, setMessage] = useState('');
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    Axios.post(`${config.base_path}/register`, {  username, name, password }).then(res => {
-      if (res.data.code === 0) {
-        alert("Register successful");
-      }
-    })
+    if (username.length < 6) {
+      setMessage("Username too short");
+      return;
+    }
+    if (password.length < 6) {
+      setMessage("Password too short");
+      return;
+    }
+    if (rePassword !== password) {
+      setMessage("Confirm password not match");
+      return;
+    }
+
+    dispatch(userAction.register(username, name, password));
   };
   return (
     <>
@@ -31,15 +41,20 @@ export default function Register() {
           </div>
 
           <p style={{ textAlign: "center" }}>OR</p>
-          <Form  onSubmit={handleSubmit}>
-          <Form.Control type="text"  className="form-control" placeholder="Full name" value = {name}  onChange={(e) => setFullName(e.target.value)}/>
-          <Form.Control type="text"  className="form-control" placeholder="Username"  value={username} onChange={(e) => setUsername(e.target.value)}/>
-          <Form.Control type="password"  className="form-control" placeholder="Password"  value={password} onChange={(e) => setPassword(e.target.value)}/>
-          <Form.Control type="password" className="form-control" placeholder="Repeat Password"  value = {rePassword} onChange={(e) => setRePassword(e.target.value)}/>
-          <button className="btn btn-primary btn-block" type="submit"><i className="fas fa-user-plus"></i> Sign Up</button>
+          <Form onSubmit={handleSubmit}>
+            <Form.Label>Full name</Form.Label>
+            <Form.Control value={name} onChange={(e) => setFullName(e.target.value)} />
+            <Form.Label>Username</Form.Label>
+            <Form.Control value={username} onChange={(e) => setUsername(e.target.value)} />
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Form.Label>Confirm password</Form.Label>
+            <Form.Control type="password" value={rePassword} onChange={(e) => setRePassword(e.target.value)} />
+            <p className="text-danger mt-3">{message}</p>
+            <button className="btn btn-primary btn-block" type="submit"><i className="fas fa-user-plus"></i> Sign Up</button>
           </Form>
-          <div className = "bbb"><Link  to={'/login'}><i className="fas fa-angle-left" /> Back</Link></div>
-          </div>
+          <div className="bbb"><Link to={'/login'}><i className="fas fa-angle-left" /> Back</Link></div>
+        </div>
       </div></>
   );
 }

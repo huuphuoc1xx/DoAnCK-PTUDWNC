@@ -22,6 +22,7 @@ export function playReduce(state = {},action){
             } 
         case PLAYGAMECONTANTS.PLAY_CHESS:
             console.log('ppppp');
+            break;
         case PLAYGAMECONTANTS.WIN_GAME:
             console.log(action.data.user_win);
             return {

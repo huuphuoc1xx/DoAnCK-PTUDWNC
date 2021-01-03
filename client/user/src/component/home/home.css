@@ -45,6 +45,9 @@
   -ms-flex-align: center;
   align-items: center;
   margin-top: 10px;
+  background-color: white;
+  border: black;
+  height: 50px;
 }
 .userName {
   margin-left: 20px;
@@ -57,4 +60,9 @@
   width: 20px;
   height: 20px;
   margin-left: 20px;
+}
+
+.lobby{
+  height: 100%;
+  background-color: white;
 }

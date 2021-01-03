@@ -1,6 +1,6 @@
 import React from 'react';
-import Square from './square';
-import '../playGame.css';
+import Square from './Square';
+import '../PlayGame.css';
 
 function Board(props){
     let result = [];

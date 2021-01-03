@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { alertConstants } from '../constans/alert.contants';
 
 

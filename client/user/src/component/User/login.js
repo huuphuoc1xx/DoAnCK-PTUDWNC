@@ -1,27 +1,25 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Form } from "react-bootstrap";
-import { Redirect, Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./user.css";
 import Axios from "axios";
-import config from "../../config/config.json"
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { userAction } from '../../actions/users';
-Axios.defaults.withCredentials=true;
+Axios.defaults.withCredentials = true;
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  
+  const [message, setMessage] = useState("");
+
   const dispatch = useDispatch()
-  const location = useLocation();
   // useEffect(() => {
   //   dispatch(userAction.logout());
   // }, [])
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(username&&password)
-    {
+    if (username && password) {
       const from = '/';
-      dispatch(userAction.login(username, password,from));
+      dispatch(userAction.login(username, password, from, setMessage));
     }
   };
 
@@ -44,19 +42,11 @@ export default function Login() {
         </div>
         <p style={{ textAlign: "center" }}> OR </p>
         <Form onSubmit={handleSubmit}>
-          <Form.Control
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Form.Control
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
+          <Form.Label>Username</Form.Label>
+          <Form.Control value={username} onChange={(e) => setUsername(e.target.value)} />
+          <Form.Label>Password</Form.Label>
+          <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <p className="text-danger mt-3">{message}</p>
           <button className="btn btn-success btn-block" type="submit">
             Sign in
         </button>
