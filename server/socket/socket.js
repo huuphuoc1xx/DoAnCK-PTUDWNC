@@ -4,7 +4,6 @@ const manager = require("./manager");
 const { startGame, updateGame } = require('./useDatabse');
 passportStrategy(passport);
 const cors = require("cors");
-const { commonModel } = require("../utils/utils");
 
 module.exports = (server) => {
   const socket = require("socket.io");
@@ -19,7 +18,6 @@ module.exports = (server) => {
   });
   io.use((socket, next) => {
     passport.authenticate("jwt", (err, user) => {
-
       if (!err && user) {
         socket.request.user = user;
         next();
@@ -58,12 +56,11 @@ module.exports = (server) => {
         play: play == 'x' ? 'o' : 'x'
       };
       let result = await updateGame('detail', JSON.stringify(squares_cur), socket.room);
-      if(checkWiner(squares_cur))
-      {
-        result = await updateGame('result',play,socket.room);
-        io.to(socket.room).emit('WIN_GAME', {user_win: play}); 
+      if (checkWiner(squares_cur)) {
+        result = await updateGame('result', play, socket.room);
+        io.to(socket.room).emit('WIN_GAME', { user_win: play });
       }
-      
+
       io.to(socket.room).emit('GET_PLAY_CHESS', data);
     })
   });

@@ -16,7 +16,6 @@ module.exports = {
       const hash = await bcrypt.hash(newUser.password, salt);
       newUser.password = hash;
 
-      console.log(newUser);
       const result = await userBUS.add(newUser);
       if (result.affectedRows) {
         //create data to response

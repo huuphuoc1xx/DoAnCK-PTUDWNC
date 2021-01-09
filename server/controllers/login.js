@@ -10,7 +10,6 @@ module.exports = {
     const { username, password } = req.body;
     try {
       const user = await userBUS.findByUsername(username);
-      console.log(user);
       if (!user) {
         throw "Invalid Username";
       } else {
