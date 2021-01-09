@@ -1,51 +1,39 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Navbar, FormControl, Form, Button } from "react-bootstrap";
+import React from "react";
+import { Navbar } from "react-bootstrap";
 import './index.css';
-import { BrowserRouter as Router, Link, Redirect } from "react-router-dom";
-import ListUser from '../component/home/listUser';
-import { history } from '../helpers/history';
-import { useSelector, useDispatch } from 'react-redux';
-import { userConstants } from "../constans/users.contants";
-import { playAction } from '../actions/playGame';
+import { useAuth } from "../provider/AuthProvider";
 function Nav(props) {
-  const [redirect, setRedirect] = useState(false);
-  const [room, setRoom] = useState('');
-  const username = useSelector(state => state.login);
-  const dispatch = useDispatch();
-  const newGame = () =>{
-    dispatch(playAction.startNewGame());
-  }
-  const handleSubmit = () =>{
-    dispatch(playAction.joinGame(room));
-  }
-  return redirect || (
+  const user = useAuth();
+  return (
     <>
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-        <div className="mr-auto">
-          <Form inline onSubmit = {handleSubmit}>
-            <FormControl type="text"
-            placeholder="Search"
-            className="mr-sm-2"
-            value={room}
-            onChange={(e) => setRoom(e.target.value)}/>
-            <Button variant="outline-info" type="submit">Search</Button>
-          </Form>
-          
-        </div>
-        <Button variant="outline-info" onClick={newGame} className ='button' x>New game</Button>
-        <div className = 'username'> </div>
+    <Navbar bg="dark" variant="dark">
+      <div className="col-6">
+        <Navbar.Brand href="#home">Caro Online</Navbar.Brand>
+      </div>
+      <div className="col-6 justify-content-end align-items-center d-flex">
 
-      </Navbar>
-      <div className="flex-container">
-        <div className="main-container">
-          {props.children}
+        <div className="profile">
+          <img
+            className="avatar"
+            src="https://giupban.com.vn/wp-content/uploads/2019/09/hinh-anh-hot-girl-de-thuong-19.jpg"
+          />
+          <div className="userName">{user.username}</div>
         </div>
-        <div className='listUser-container'>
-          <ListUser />
+        <div className="d-flex justify-content-between">
+          <button className="top-button">
+            <i className="fa fa-user"></i>
+          </button>
+          <button className="top-circle-btn">
+            <i class="fa fa-history"></i>
+          </button>
+          <button className="top-circle-btn">
+            <i className="fa fa-sign-out"></i>
+          </button>
         </div>
       </div>
-
+      <div className='username'> </div>
+    </Navbar>
+    {props.children}
     </>
   );
 }

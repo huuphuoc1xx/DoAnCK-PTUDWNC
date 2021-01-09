@@ -2,16 +2,12 @@
   display: flex;
  
 }
-.main-container{
-  margin: 10px;
-  text-align: center;
-  flex-grow: 8;
-  
-}
-.listUser-container{
-    margin: 10px;
+.list-container{
     flex-grow: 1;
     background-color: white;
+    height: -webkit-fill-available;
+    width: 30vw;
+    overflow-y: auto;
 }
 .username{
   color: #f1f1f1;
@@ -20,4 +16,16 @@
 }
 .button{
   margin-left: 7px;
+}
+
+.profile{
+  color: white;
+  display: flex;
+  align-items: center;
+  background-color: rgb(136,148,163);
+  padding-right: 10px;
+  border: black;
+  height: 3rem;
+  width: 10rem;
+  max-width: 10rem;
 }

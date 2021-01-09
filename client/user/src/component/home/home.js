@@ -1,49 +1,47 @@
-import React, { useState, useEffect, useContext } from "react";
-import NavHome from "../Nav";
+import React from "react";
+import { Button } from "react-bootstrap";
+import { PLAYGAMECONTANTS } from "../../constans/playGame.contants";
+import { ACTIONSOCKET } from "../../constans/socket.contants";
+import AuthProvider from "../../provider/AuthProvider";
+import Nav from "../Nav";
 import ListUser from "./listUser";
-import "./home.css";
-import config from "../../config/config.json";
-import Cookies from "js-cookie";
-import { useBeforeunload } from "react-beforeunload";
-
-import socketIOClient from "socket.io-client";
-
-function Home() {
-  const [listUser, setListUser] = useState([]);
-  const [socket, setSocket] = useState();
-
-  useEffect(() => {
-    const socket = socketIOClient(`${config.socket}`, {
-      path: "/socket",
-      query: { token: Cookies.get("jwt") },
-    });
-    socket.on("online", (data) => {
-      setListUser(JSON.parse(data));
-    });
-    socket.on("list", (data) => {
-      setListUser(JSON.parse(data));
-    });
-    socket.on("offline", (data) => {
-      setListUser(JSON.parse(data));
-    });
-    setSocket(socket);
-  }, []);
-  useBeforeunload(() => {
-    try {
-      socket.emit("offline");
-      return "asdf";
-
-    } catch (error) {
-      console.log(error);
-      return "asdf";
-    }
-  });
+import { useDispatch } from 'react-redux';
+import { history } from '../../helpers/history';
+function Home(props) {
+  const dispatch = useDispatch();
+  const playNewGame = (e) => {
+    e.preventDefault();
+    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.USER_JOIN_GAME});
+    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.GET_PLAY_CHESS});
+    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.WIN_GAME});
+    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.USER_PLAY_GAME});
+    dispatch({type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.START_GAME});
+    history.push('/playgame');
+  }
+  const findGame = (e) => {
+    e.preventDefault();
+    history.push('/chessboard');
+  }
   return (
-    <>
-      <NavHome>
-            lll
-      </NavHome>
-    </>
+    <AuthProvider>
+      <Nav />
+      <div className="flex-container">
+        <div className="main-container justify-content-center ">
+          <div className="lobby col-md-8 col-lg-6 col-sm-12  mr-2">
+            
+          </div>
+        </div>
+        <div className='list-container'>
+          <ListUser />
+        </div>
+      </div>
+      <div className = "home">
+        <Button onClick = {playNewGame}className = "btPlay" >Play</Button>
+        <Button onClick = {findGame} className = "btPlay">Danh sách bàn cờ</Button>
+        <Button className = "btPlay">Chơi Nhanh</Button>
+        <Button className = "btPlay">Mời người chơi</Button>
+      </div>
+    </AuthProvider>
   );
 }
 export default Home;

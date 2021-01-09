@@ -1,4 +1,5 @@
 
+
 const listUser = [];
 
 const listRoom = [];
@@ -19,20 +20,22 @@ const addRoom = (room, user, socketId) => {
       username: user.username,
       socketId: socketId,
     };
-    const user_oo = {}
-    listRoom.push({user_oo, user_x, room: room });
+    const user_o = false;
+    let listUser = [user_x];
+    listRoom.push({user_o:user_o, user_x:user_x, room: room, listUser:listUser, status:0});
   } else {
     listRoom[index].room = room;
   }
 }
 const addRoomExits = (room, user, socketId) => {
-  const user_o  = {
+  const userAdd  = {
     userId: user.id,
     username: user.username,
     socketId: socketId,
   };
   const index = listRoom.findIndex(value => value.room==room);
-  listRoom[index].user_oo = user_o;
+  
+  listRoom[index].listUser.push(userAdd);
 }
 const removeUser = (userId) => {
   const index = listUser.findIndex(item => item.userId === userId);
@@ -48,10 +51,41 @@ const getListOnline = () => {
   return listUser.map(item => { return { userId: item.userId, username: item.username } });
 }
 const getRoomByOne = (room) => {
-  return listRoom.find(value => value.room == room);
+  return listRoom.forEach(value => {
+    if(value.room == room) return value.listUser;
+  });
 }
 const getRoom = () => {
-  return listRoom;
+  if(!listRoom.length) return [];
+  const result = listRoom.reduce((listResult, room) => {
+    listResult.push({room: room.room, status: room.status});
+    return listResult;
+  }, []);
+  return result;
+}
+const addPlayer = (user) => {
+  const index = listRoom.findIndex(value => value.listUser.forEach(User => User.UserId===user.User.Id));
+  if(index>0)
+  {
+    const user_o = {
+    userId: user.id,
+    username: user.username,
+    socketId: socketId,
+    }
+    listRoom[index].user_o=user_o;
+    return listRoom[index].room;
+  }
+  return false
+}
+const getUserPlay = (room) => {
+  let listUserPlay = [];
+  listRoom.forEach(value => {
+    if(value.room == room){
+      listUserPlay.push(value.user_x);
+      value.user_o?listUserPlay.push(value.user_o):null;
+    }
+  });
+  return listUserPlay;
 }
 const getRoomByUser = (socketId) => users.find((user) => user.socketId === socketId);
 module.exports = {
@@ -63,5 +97,7 @@ module.exports = {
   getRoomByUser,
   getRoomByOne,
   getRoom,
-  addRoomExits
+  addRoomExits,
+  addPlayer,
+  getUserPlay
 }

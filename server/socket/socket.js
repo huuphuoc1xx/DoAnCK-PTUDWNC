@@ -4,6 +4,7 @@ const manager = require("./manager");
 const { startGame, updateGame } = require('./useDatabse');
 passportStrategy(passport);
 const cors = require("cors");
+const { authenticate } = require("passport");
 
 module.exports = (server) => {
   const socket = require("socket.io");
@@ -36,18 +37,23 @@ module.exports = (server) => {
       manager.addRoom(room, user, socket.id);
       socket.room = room;
       socket.join(room);
-      io.to(socket.room).emit('USER_JOIN_GAME', manager.getRoomByOne(room));
+      io.to(socket.room).emit('USER_PLAY_GAME', [user]);
+      io.to(socket.room).emit('USER_JOIN_GAME', [user]);
     });
     socket.on('JOIN_GAME', async (room) => {
-      const result = await updateGame('player_o', user.id, room);
       room = parseInt(room);
       manager.addRoomExits(room, user, socket.id);
       socket.room = room;
       socket.join(room);
+      socket.emit('USER_PLAY_GAME', manager.getUserPlay(room));
       io.to(socket.room).emit('USER_JOIN_GAME', manager.getRoomByOne(room));
+    });
+    socket.on('START_PLAY', async () => {
+      const room = manager.addPlayer(user, socket.id);
+      const result = updateGame('player_o', user_id, room);
       const data = { squares: Array(20 * 20).fill(null), play: 'x' }
       io.to(socket.room).emit('GET_PLAY_CHESS', data);
-    });
+    })
     socket.on('PLAY_CHESS', async ({ squares, play, i }) => {
       const squares_cur = squares;
       squares_cur[i] = play == 'x' ? 'X' : 'O';
@@ -60,8 +66,11 @@ module.exports = (server) => {
         result = await updateGame('result', play, socket.room);
         io.to(socket.room).emit('WIN_GAME', { user_win: play });
       }
-
       io.to(socket.room).emit('GET_PLAY_CHESS', data);
+    });
+    socket.on('GET_NEW_CHESSBOARD', async () => {
+      const result = manager.getRoom();
+      socket.emit('GET_NEW_CHESSBOARD', result);
     })
   });
 }

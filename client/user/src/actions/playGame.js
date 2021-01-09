@@ -20,9 +20,9 @@ function joinGame(room){
         history.push('/playgame');
     }
 }
-function playGame(squares, play,i){
+function playGame(i){
     return dispatch => {
-    dispatch({type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.PLAY_CHESS, data: {squares:squares,play:play,i:i}});
+    dispatch({type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.PLAY_CHESS, data: {i:i}});
     }
 }
 export const playAction = {
