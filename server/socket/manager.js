@@ -1,8 +1,8 @@
 
 
-const listUser = [];
+let listUser = [];
 
-const listRoom = [];
+let listRoom = [];
 
 const addUser = (user, socketId) => {
   const index = listUser.findIndex(value => value.userId === user.id);
@@ -63,9 +63,9 @@ const getRoom = () => {
   }, []);
   return result;
 }
-const addPlayer = (user) => {
-  const index = listRoom.findIndex(value => value.listUser.forEach(User => User.UserId===user.User.Id));
-  if(index>0)
+const addPlayer = (room, user, socketId) => {
+  const index = listRoom.findIndex(value => value.room==room);
+  if(index>=0&&!listRoom[index].status&&user.id!=listRoom[index].user_x.userId);
   {
     const user_o = {
     userId: user.id,
@@ -73,6 +73,7 @@ const addPlayer = (user) => {
     socketId: socketId,
     }
     listRoom[index].user_o=user_o;
+    listRoom[index].status=1;
     return listRoom[index].room;
   }
   return false
@@ -87,6 +88,27 @@ const getUserPlay = (room) => {
   });
   return listUserPlay;
 }
+const checkCurState = (room, chess, user) => {
+  const index = listRoom.findIndex(value => value.room==room);
+  if(index>=0)
+  {
+    if(!listRoom[index].status) return false;
+    if(listRoom[index].status%2==1&&user.id==listRoom[index].user_o.userId) return false;
+    if((listRoom[index].status%2==0)&&user.id==listRoom[index].user_x.userId) return false;
+    listRoom[index].status=listRoom[index].status%2?2:1;
+    return listRoom[index].status;
+  }
+  return false;
+}
+const updateStatus = (room) => {
+  const index = listRoom.findIndex(value => value.room==room);
+  if(index>=0)
+  {
+    let newListRoom = listRoom.slice(0,index);
+    newListRoom = [...newListRoom, listRoom.slice(index+1,listRoom.length)[0]];
+    listRoom = newListRoom;
+  }
+}
 const getRoomByUser = (socketId) => users.find((user) => user.socketId === socketId);
 module.exports = {
   addUser,
@@ -99,5 +121,7 @@ module.exports = {
   getRoom,
   addRoomExits,
   addPlayer,
-  getUserPlay
+  getUserPlay,
+  checkCurState,
+  updateStatus
 }

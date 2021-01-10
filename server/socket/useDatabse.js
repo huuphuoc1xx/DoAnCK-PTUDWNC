@@ -10,14 +10,21 @@ async function startGame({ username_x }) {
     const result = await db.add('game',entity);
     return result.insertId;
 }
-async function updateGame (fieldChange, data, id) {
+async function updateGame ( entity, id) {
+    const result = await db.edit('game',entity, {id:id});
+}
+const getGame = async (room) => {
+    return await db.load(`SELECT detail FROM game WHERE id =?`,[room]);
+}
+async function updateUserPlay (fieldChange, data, id) {
     const entity = {}
     entity[fieldChange] = data;
     const result = await db.edit('game',entity, {id:id});
 }
-
 module.exports = {
     startGame,
-    updateGame
+    updateGame,
+    getGame,
+    updateUserPlay
 
 }

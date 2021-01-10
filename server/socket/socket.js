@@ -1,7 +1,7 @@
 const passport = require("passport");
 const passportStrategy = require("../config/passport");
 const manager = require("./manager");
-const { startGame, updateGame } = require('./useDatabse');
+const { startGame, updateGame, getGame, updateUserPlay } = require('./useDatabse');
 passportStrategy(passport);
 const cors = require("cors");
 const { authenticate } = require("passport");
@@ -32,12 +32,13 @@ module.exports = (server) => {
     socket.on('USER_JOIN_SOCKET', ({ user }) => {
       io.emit("UPDATE_LIST_USER", manager.getListOnline())
     });
+    //lúc mới bắt đầu
     socket.on('START_GAME', async () => {
       const room = await startGame({ username_x: user.id });
       manager.addRoom(room, user, socket.id);
       socket.room = room;
       socket.join(room);
-      io.to(socket.room).emit('USER_PLAY_GAME', [user]);
+      io.to(socket.room).emit('USER_PLAY_GAME',{ list:[user], room: room });
       io.to(socket.room).emit('USER_JOIN_GAME', [user]);
     });
     socket.on('JOIN_GAME', async (room) => {
@@ -45,79 +46,88 @@ module.exports = (server) => {
       manager.addRoomExits(room, user, socket.id);
       socket.room = room;
       socket.join(room);
-      socket.emit('USER_PLAY_GAME', manager.getUserPlay(room));
+      socket.emit('USER_PLAY_GAME', {list: manager.getUserPlay(room), room: room});
       io.to(socket.room).emit('USER_JOIN_GAME', manager.getRoomByOne(room));
     });
-    socket.on('START_PLAY', async () => {
-      const room = manager.addPlayer(user, socket.id);
-      const result = updateGame('player_o', user_id, room);
-      const data = { squares: Array(20 * 20).fill(null), play: 'x' }
-      io.to(socket.room).emit('GET_PLAY_CHESS', data);
-    })
-    socket.on('PLAY_CHESS', async ({ squares, play, i }) => {
-      const squares_cur = squares;
-      squares_cur[i] = play == 'x' ? 'X' : 'O';
-      const data = {
-        squares: squares_cur,
-        play: play == 'x' ? 'o' : 'x'
-      };
-      let result = await updateGame('detail', JSON.stringify(squares_cur), socket.room);
-      if (checkWiner(squares_cur)) {
-        result = await updateGame('result', play, socket.room);
-        io.to(socket.room).emit('WIN_GAME', { user_win: play });
+    socket.on('START_PLAY', async (room) => {
+      if(manager.addPlayer(room, user, socket.id)){
+        const result = updateUserPlay('player_o', user.id, room);
+        io.to(socket.room).emit('USER_PLAY_GAME',{list: [user], room: room });
       }
-      io.to(socket.room).emit('GET_PLAY_CHESS', data);
+    })
+    socket.on('PLAY_CHESS', async (data) => {
+      let squares = await getGame(data.room);
+      squares = squares[0].detail||'{}';
+      squares = JSON.parse(squares);
+      const exist = Object.values(squares).find(value => value==data.chess)
+      if(exist==undefined)
+      {
+        const checkCurState = manager.checkCurState(data.room, data.chess, user);
+        const count = Object.keys(squares).length
+        if(checkCurState){
+          io.to(socket.room).emit('GET_PLAY_CHESS', {chess: data.chess, value:checkCurState%2?'O':'X'});
+          const winner = checkWin(squares, data.chess, checkCurState%2?'O':'X');
+          squares[count] = data.chess;
+          const update = {
+            detail: JSON.stringify(squares),
+            result: winner?checkCurState%2?'O':'X':null
+          }
+          let result = await updateGame(update, socket.room);
+          if(winner)
+          {
+            io.to(socket.room).emit('WIN_GAME', {username: user.username});
+            manager.updateStatus(data.room);
+          }
+        }
+      }
     });
     socket.on('GET_NEW_CHESSBOARD', async () => {
       const result = manager.getRoom();
       socket.emit('GET_NEW_CHESSBOARD', result);
-    })
+    });
   });
 }
-const checkWiner = (squares) => {
-  const row = 20;
-  for (let i = 0; i < row; i++)
-    for (let j = 0; j < row - 2; j++) {
-      if (squares[row * i + j] && squares[row * i + j] === squares[row * i + j + 1] && squares[row * i + j] === squares[row * i + j + 2])
 
-        return {
-          square: squares[row * i + j],
-          a: row * i + j,
-          b: row * i + j + 1,
-          c: row * i + j + 2
-        }
-    }
-  for (let i = 0; i < row; i++)
-    for (let j = 0; j < row - 2; j++) {
-      if (squares[row * j + i] && squares[row * j + i] === squares[row * (1 + j) + i] && squares[row * j + i] === squares[row * (2 + j) + i])
-        return {
-          square: squares[row * j + i],
-          a: row * j + i,
-          b: row * (j + 1) + i,
-          c: row * (j + 2) + i
-        }
-    }
-  for (let i = 0; i < row - 2; i++)
-    for (let j = 0; j < row - 2; j++) {
-      if (squares[row * j + i] && squares[row * j + i] === squares[row * (1 + j) + i + 1] && squares[row * j + i] === squares[row * (2 + j) + i + 2])
-        return {
-          square: squares[row * j + i],
-          a: row * j + i,
-          b: row * (j + 1) + i + 1,
-          c: row * (j + 2) + i + 2
-        }
+const checkWin = (squaresObject, chess, type) => {
 
-    }
-  for (let i = 0; i < row - 2; i++)
-    for (let j = row - 1; j >= row - 2; j--) {
-      if (squares[row * j + i] && squares[row * j + i] === squares[row * (j - 1) + i + 1] && squares[row * j + i] === squares[row * (j - 2) + i + 2])
-        return {
-          square: squares[row * j + i],
-          a: row * j + i,
-          b: row * (j - 1) + i + 1,
-          c: row * (j - 2) + i + 2
-        }
-    }
-
-  return null
+  const squares = Array(20).fill(null);
+  for(let i=0; i<20;i++)
+  squares[i] = Array(20).fill(null);
+  Object.keys(squaresObject).map((key) =>  {
+    return squares[parseInt(squaresObject[key]/20)][squaresObject[key]%20] = Number(key)%2?'O':'X';
+  });
+  const result = Array(4);
+  result[0] = checkRow(squares, parseInt(chess/20), chess%20 - 4, chess%20, type);
+  result[1] = checkCol(squares, chess%20, parseInt(chess/20) - 4, parseInt(chess/20), type);
+  result[2] = checkCheo1(squares, parseInt(chess/20) - 4 , chess%20 - 4, chess%20, type);
+  result[3] = checkCheo2(squares, parseInt(chess/20) + 4, chess%20 - 4, chess%20, type);
+  return result.find(element => element==4)!=undefined?true:false;
+}
+const checkRow = (square, i, j, col,  type) => {
+  if(j > col+4) return 0;
+  if(j < 0) return checkRow(square, i, j+1,  col,  type) + 0;
+  if(j >= 20 ) return 0;
+  const count = square[i][j]==type?1:0
+  return (checkRow(square, i, j+1,  col,  type) + count);
+}
+const checkCol = (square, i, j, col,  type) => {
+  if(j > col+4) return 0;
+  if(j < 0) return checkCol(square, i, j+1,  col,  type);
+  if(j >= 20 ) return 0;
+  const count = square[j][i]==type?1:0;
+  return checkCol(square, i, j+1,  col,  type) + count;
+}
+const checkCheo1 = (square, i, j, col, type) => {
+  if(j > col+4) return 0;
+  if(i<0||j<0) return checkCheo1(square, i+1, j+1, col, type);
+  if(i>=20||j>=20) return 0;
+  const count = square[i][j]==type?1:0;
+  return checkCheo1(square, i+1, j+1, col, type) + count;
+}
+const checkCheo2 = (square, i, j, col, type) => {
+  if(j > col+4) return 0;
+  if(i<0||j>=20) return 0;
+  if(i>=20||j<0)  return checkCheo2(square, i-1, j+1, col, type);
+  const count = square[i][j]==type?1:0;
+  return checkCheo2(square, i-1, j+1, col, type) + count;
 }
