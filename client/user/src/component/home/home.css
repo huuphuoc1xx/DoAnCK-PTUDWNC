@@ -83,3 +83,18 @@
   background-color: cadetblue;
   color: #ff4d4d;
 }
+
+.lobby{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: white;
+}
+
+.lobby-btn{
+  margin-top: 2px;
+}
+
+.lobby-btn-container{
+  margin-top: 50%;
+}

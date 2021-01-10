@@ -13,7 +13,7 @@ import "./App.css";
 Axios.defaults.withCredentials = true;
 function App() {
   return (
-    <div style={{ "margin": "0" }}>
+    <div style={{ "margin": "0", height:"100%" }}>
       <Router history={history}>
         <Switch>
           <Route exact path="/register">

@@ -3,11 +3,12 @@
  
 }
 .list-container{
-    flex-grow: 1;
-    background-color: white;
-    height: -webkit-fill-available;
-    width: 30vw;
-    overflow-y: auto;
+  flex-grow: 1;
+  background-color: white;
+  height: 100%;
+  max-width: 200px;
+  border-left: 5px solid black;
+  overflow-y: auto;
 }
 .username{
   color: #f1f1f1;

@@ -11,11 +11,11 @@ function Home(props) {
   const dispatch = useDispatch();
   const playNewGame = (e) => {
     e.preventDefault();
-    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.USER_JOIN_GAME});
-    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.GET_PLAY_CHESS});
-    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.WIN_GAME});
-    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.USER_PLAY_GAME});
-    dispatch({type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.START_GAME});
+    dispatch({ type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.USER_JOIN_GAME });
+    dispatch({ type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.GET_PLAY_CHESS });
+    dispatch({ type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.WIN_GAME });
+    dispatch({ type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.USER_PLAY_GAME });
+    dispatch({ type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.START_GAME });
     history.push('/playgame');
   }
   const findGame = (e) => {
@@ -26,19 +26,25 @@ function Home(props) {
     <AuthProvider>
       <Nav />
       <div className="flex-container">
-        <div className="main-container justify-content-center ">
-        <div className = "home">
-        <Button onClick = {playNewGame}className = "btPlay" >Play</Button>
-        <Button onClick = {findGame} className = "btPlay">Danh sách bàn cờ</Button>
-        <Button className = "btPlay">Chơi Nhanh</Button>
-        <Button className = "btPlay">Mời người chơi</Button>
-      </div>
+        <div className="lobby col-md-8 col-lg-6 col-sm-12 m-auto">
+          <div className="lobby-btn-container d-flex flex-column col-6">
+            <div className="d-flex justify-content-center">
+              <Button variant="secondary" onClick={playNewGame} className="lobby-btn" style={{
+                borderRadius: "100%",
+                height: "60px",
+                width: "60px",
+                marginBottom: "10px",
+              }}>Chơi
+              </Button>
+            </div>
+            <Button variant="dark" onClick={findGame} className="lobby-btn">Danh sách bàn cờ</Button>
+            <Button variant="dark" className="lobby-btn">Chơi Nhanh</Button>
+            <Button variant="dark" className="lobby-btn">Mời người chơi</Button>
+          </div>
         </div>
-        <div className='list-container'>
-          <ListUser />
-        </div>
+        <ListUser />
       </div>
-      
+
     </AuthProvider>
   );
 }

@@ -101,7 +101,7 @@ li {
 .flex-container{
   display: flex;
   align-items: stretch;
-  height: 575px;
+  height: 100%;
 }
 .flex-game{
   background-color: white;

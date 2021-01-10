@@ -2,6 +2,7 @@ import React from 'react';
 import Game from './game/game';
 import NavHome from "../Nav";
 import './playGame.css';
+import Item from "../home/itemUser";
 import { history } from '../../helpers/history';
 import { useSelector, useDispatch } from 'react-redux';
 import AuthProvider from "../../provider/AuthProvider";
@@ -16,21 +17,25 @@ export const PlayGame = () => {
   const room = useSelector(state => state.playReduce.room);
   const dispatch = useDispatch();
   const playGame = () => {
-    dispatch({type: ACTIONSOCKET.EMIT,event: PLAYGAMECONTANTS.START_PLAY, data: room}); 
+    dispatch({ type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.START_PLAY, data: room });
   }
-  if (user_win) {
-    alert(user_win + 'win');
-    history.push('/');
-  }
+
+  if(!userPlayer)
+    history.push("/");
   return (
     <>
       <AuthProvider>
         <NavHome>
-          <div className='flex-container'>
+          <div className='flex-container' on>
             <div className='flex-game'><Game player={player} /></div>
             <div className='flex-user'>
-            <Button onClick={playGame}>Play</Button>
-            {userPlayer.map(user => (<div>{user.username}</div>))}
+              <Button variant="dark" onClick={playGame}>Play</Button>
+              {user_win && <Button variant="dark" onClick={() => history.push("/")}>Về trang chủ</Button>}
+              {userPlayer.map((user, index) => <div style={{
+                fontSize: "14px",
+                border: `1px solid ${user_win === user.username ? "red" : "black"}`,
+                margin: "3px"
+              }}> Người chơi {index + 1} <Item user={user}></Item> </div>)}
             </div>
             <div className='flex-chat'>chat</div>
           </div>
