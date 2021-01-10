@@ -2,13 +2,14 @@ import React from "react";
 import { Navbar } from "react-bootstrap";
 import './index.css';
 import { useAuth } from "../provider/AuthProvider";
+import { Link } from "react-router-dom";
 function Nav(props) {
   const user = useAuth();
   return (
     <>
     <Navbar bg="dark" variant="dark">
       <div className="col-6">
-        <Navbar.Brand href="#home">Caro Online</Navbar.Brand>
+        <Link to="/"><Navbar.Brand href="#">Caro Online</Navbar.Brand></Link>
       </div>
       <div className="col-6 justify-content-end align-items-center d-flex">
 
