@@ -10,6 +10,7 @@ import { Button } from 'react-bootstrap';
 import { userService } from '../../services/users';
 import { PLAYGAMECONTANTS } from "../../constans/playGame.contants";
 import { ACTIONSOCKET } from "../../constans/socket.contants";
+import { Redirect } from 'react-router-dom';
 export const PlayGame = () => {
   const player = useSelector(state => state.playReduce.x);
   const user_win = useSelector(state => state.playReduce.user_win);
@@ -21,7 +22,7 @@ export const PlayGame = () => {
   }
 
   if(!userPlayer)
-    history.push("/");
+    return <Redirect to="/"/>;
   return (
     <>
       <AuthProvider>
@@ -30,7 +31,8 @@ export const PlayGame = () => {
             <div className='flex-game'><Game player={player} /></div>
             <div className='flex-user'>
               <Button variant="dark" onClick={playGame}>Play</Button>
-              {user_win && <Button variant="dark" onClick={() => history.push("/")}>Về trang chủ</Button>}
+              <br/>
+              {user_win} Thắng
               {userPlayer.map((user, index) => <div style={{
                 fontSize: "14px",
                 border: `1px solid ${user_win === user.username ? "red" : "black"}`,

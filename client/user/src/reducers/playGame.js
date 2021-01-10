@@ -46,10 +46,9 @@ export function playReduce(state = {},action){
                 ...state
             }
         case PLAYGAMECONTANTS.WIN_GAME:
-            alert(action.data.username + ' win');
             return {
                 ...state,
-                user_win: action.data.user_win
+                user_win: action.data.username
             }
         default:
             return {
