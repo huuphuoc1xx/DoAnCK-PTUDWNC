@@ -2,23 +2,17 @@ import React from 'react';
 import '../playGame.css';
 import Board from './board';
 import { useDispatch, useSelector } from 'react-redux';
-import { playAction } from '../../../actions/playGame';
-function Game({player}) {
+import { PLAYGAMECONTANTS } from "../../../constans/playGame.contants";
+import { ACTIONSOCKET } from "../../../constans/socket.contants";
+
+function Game(props) {
     const dispatch = useDispatch();
     let squares = useSelector(state => state.playReduce.squares);
-    let play = useSelector(state => state.playReduce.play);
+    let room = useSelector(state => state.playReduce.room);
     const handleClick = (i) => {
-        dispatch(playAction.playGame(squares,play,i));
+        const data = {room: room, chess: i}
+        dispatch({type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.PLAY_CHESS,data: data})
     };
-    const winner = false;
-    let a = null;
-    let b = null;
-    let c = null;
-    if (winner) {
-        a = winner.a;
-        b = winner.b;
-        c = winner.c;
-    }
     return (<Board
         squares={squares}
         onClick={(i) => handleClick(i)}

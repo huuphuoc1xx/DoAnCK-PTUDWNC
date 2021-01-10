@@ -27,20 +27,18 @@ function Home(props) {
       <Nav />
       <div className="flex-container">
         <div className="main-container justify-content-center ">
-          <div className="lobby col-md-8 col-lg-6 col-sm-12  mr-2">
-            
-          </div>
-        </div>
-        <div className='list-container'>
-          <ListUser />
-        </div>
-      </div>
-      <div className = "home">
+        <div className = "home">
         <Button onClick = {playNewGame}className = "btPlay" >Play</Button>
         <Button onClick = {findGame} className = "btPlay">Danh sách bàn cờ</Button>
         <Button className = "btPlay">Chơi Nhanh</Button>
         <Button className = "btPlay">Mời người chơi</Button>
       </div>
+        </div>
+        <div className='list-container'>
+          <ListUser />
+        </div>
+      </div>
+      
     </AuthProvider>
   );
 }
