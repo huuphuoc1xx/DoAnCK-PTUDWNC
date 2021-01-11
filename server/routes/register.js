@@ -5,6 +5,6 @@ const authentication = require('../services/authentication');
 
 const router = express.Router();
 
-router.post('/', authentication.forwardAuthenticated, controller.post);
+router.post('/', controller.post);
 
 module.exports = router;

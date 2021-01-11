@@ -1,4 +1,4 @@
-const userBUS = require('../bus/user');
+const userBUS = require('../models/user');
 const { handleReadRequest } = require('../utils/handleRequest');
 
 module.exports = {
@@ -10,11 +10,6 @@ module.exports = {
     })
   },
   getById: function (req, res, next) {
-    handleReadRequest({
-      req, res, sourceInput: "user",
-      fields: ["id"],
-      readFunc: userBUS.findByCondition,
-      resource: "user"
-    })
+    res.json({ code: 0, data: { user: req.user } })
   }
 };

@@ -4,28 +4,19 @@ const { STATUS } = require('../utils/constant');
 const { responseWithStatus } = require('../utils/utils');
 passportStrategy(passport);
 
-const ensureAuthenticated = function (req, res, next) {
+const ensureAuthenticated = (role) => function (req, res, next) {
   passport.authenticate('jwt', { session: false }, function (err, user) {
-    if (err || !user) {
+    if (err || !user || (role && user.role != role)) {
       responseWithStatus(res, "UNAUTHORIZE");
     } else {
-      req.user=user;
+      delete user.password;
+      req.user = user;
       next();
     }
   })(req, res, next);
 };
 
-const forwardAuthenticated = function (req, res, next) {
-  passport.authenticate('jwt', { session: false }, function (err, user) {
-    if (!user) {
-      next();
-    } else {
-      res.redirect("/");
-    }
-  })(req, res, next);
-};
 
 module.exports = {
-  ensureAuthenticated,
-  forwardAuthenticated
+  ensureAuthenticated
 };
