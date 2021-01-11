@@ -1,6 +1,6 @@
 const passportJwt = require('passport-jwt');
 
-const userBUS = require('../bus/user');
+const userBUS = require('../models/user');
 
 const JwtStragegy = passportJwt.Strategy;
 

@@ -1,16 +1,16 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const userBUS = require("../bus/user");
+const userBUS = require("../models/user");
 const { STATUS } = require("../utils/constant");
 const { responseWithStatus, responseWithData } = require("../utils/utils");
 
 module.exports = {
-  post: async (req, res, next) => {
+  login: (role) => async (req, res, next) => {
     const { username, password } = req.body;
     try {
       const user = await userBUS.findByUsername(username);
-      if (!user) {
+      if (!user || (role && user.role != role)) {
         throw "Invalid Username";
       } else {
         const isMatch = await bcrypt.compare(password, user.password);
@@ -31,7 +31,7 @@ module.exports = {
       console.trace(err);
       res.json({
         code: STATUS.UNAUTHORIZE.code,
-        data: { message: err.message },
+        data: { message: err.message||err },
       });
     }
   },
