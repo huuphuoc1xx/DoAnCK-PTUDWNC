@@ -7,7 +7,7 @@ const JwtStragegy = passportJwt.Strategy;
 var cookieExtractor = function (req) {
   var token = null;
   if (req.cookies) token = req.cookies['jwt'];
-  else if(req.query) token=req.query.token;
+  else if (req.query) token = req.query.token;
   return token;
 };
 
@@ -18,6 +18,7 @@ const jwtOptions = {
 const jwtStragegy = new JwtStragegy(jwtOptions, function (payload, done) {
   userBUS.findByCondition({ id: payload.id })
     .then(function (user) {
+      user = user[0];
       if (!user) {
         return done(new Error("User not found!"));
       } else {
