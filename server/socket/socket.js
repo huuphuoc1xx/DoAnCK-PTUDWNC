@@ -101,7 +101,7 @@ module.exports = (server) => {
 const checkWin = (squaresObject, chess, type) => {
   const squares = {};
   Object.keys(squaresObject).forEach((key) => {
-    const position = { x: parseInt(squaresObject[key] / 20), y: squaresObject[key] % 20 };
+    const x = parseInt(squaresObject[key] / 20), y = squaresObject[key] % 20;
     squares[x] = squares[x] || {};
     squares[x][y] = Number(key) % 2 ? 'O' : 'X';
   });
