@@ -26,9 +26,7 @@ function App() {
               </HomeProvider>
             </Route>
             <Route exact path="/">
-              <HomeProvider>
-                <ListUser></ListUser>
-              </HomeProvider>
+              <Redirect to="/list-user"/>
             </Route>
           </PopupProvider>
         </Switch>
