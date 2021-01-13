@@ -51,6 +51,7 @@ module.exports = (server) => {
       io.to(socket.room).emit("USER_JOIN_GAME", manager.getRoomByOne(room));
     });
     socket.on("START_PLAY", async (room) => {
+      console.log("START_PLAY");
       if (manager.addPlayer(room, user, socket.id)) {
         const result = await updateUserPlay("player_o", user.id, room);
         const listUser = manager.getUserPlay(room);

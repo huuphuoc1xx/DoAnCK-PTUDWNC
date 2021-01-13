@@ -68,7 +68,11 @@ const addPlayer = (room, user, socketId) => {
   const index = listRoom.findIndex(value => value.room == room);
   if (listRoom[index].status) return false;
   if (user.id == listRoom[index].user_x.userId) return false;
+<<<<<<< HEAD
   if (index >= 0) {
+=======
+  if (index >= 0){
+>>>>>>> e7398cf... merge from master
     const user_o = {
       userId: user.id,
       username: user.username,
@@ -95,9 +99,14 @@ const checkCurState = (room, user) => {
   if (!roomInfo) return false;
   const { status, user_o, user_x } = roomInfo;
   if (status == 0) return false;
+<<<<<<< HEAD
   if (status == 1 && user.id == user_o.userId) return false;
   if ((status == 2) && user.id == user_x.userId) return false;
   roomInfo.status = status % 2 + 1;
+=======
+  if (status % 2 == 1 && user.id == user_o.userId) return false;
+  if ((status % 2 == 0) && user.id == user_x.userId) return false;
+>>>>>>> e7398cf... merge from master
   return status;
 }
 const updateStatus = (room) => {
