@@ -1,15 +1,8 @@
 const passport = require("passport");
 const passportStrategy = require("../config/passport");
 const manager = require("./manager");
-const {
-  startGame,
-  updateGame,
-  getGame,
-  updateUserPlay,
-} = require("../models/game");
+const { startGame, updateGame, getGame, updateUserPlay } = require('../models/game');
 passportStrategy(passport);
-const cors = require("cors");
-const { authenticate } = require("passport");
 
 module.exports = (server) => {
   const socket = require("socket.io");
