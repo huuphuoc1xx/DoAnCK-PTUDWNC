@@ -4,7 +4,7 @@ const router = require("express").Router();
 
 router.use("/login", require("./login"));
 router.use(ensureAuthenticated("ADMIN"));
-router.use("/list-user", require("./list-user"));
+router.use("/user", require("./user"));
 router.use("/history", require("./history"));
 
 module.exports = router;
