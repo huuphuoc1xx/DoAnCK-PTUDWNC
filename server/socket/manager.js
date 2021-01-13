@@ -3,6 +3,8 @@
 let listUser = [];
 
 let listRoom = [];
+
+let listRandom = [];
 const { InsufficientStorage } = require('http-errors');
 const { startGame, updateGame, getGame, updateUserPlay } = require('../models/game');
 const addUser = (user, socketId) => {
@@ -118,20 +120,20 @@ const outRoom = (userId) => {
   const roomInfo = getRoomById(userId);
   if (!roomInfo) return;
   roomInfo.listUser = roomInfo.listUser.filter(user => user.userId != userId);
-  console.log('info', roomInfo);
+  if(roomInfo.status==2) return;
+  roomInfo.status=2;
   if (roomInfo.listUser.length === 0) {
     listRoom = listRoom.filter(value => value.room != roomInfo.room);
     return;
   }
-
   let winner = null;
   switch (userId) {
     case roomInfo.user_x.userId:
-      winner = 'X';
+      winner = 'O';
       roomInfo.user_x = null;
       break;
     case roomInfo.user_o.userId:
-      winner = 'O';
+      winner = 'X';
       roomInfo.user_o = null;
       break;
     default:
@@ -139,6 +141,15 @@ const outRoom = (userId) => {
   };
   if (!winner) return;
   updateUserPlay('result', winner, roomInfo.room);
+}
+const getRandomUser = async (user, socket) => {
+  if(!listRandom.length) {
+    listRandom.push({user: user, socket: socket});
+    return false;
+  }
+  const userRandom = listRandom[0];
+  listRandom.splice(0,1);
+  return userRandom;
 }
 const getRoomByUser = (socketId) => users.find((user) => user.socketId === socketId);
 module.exports = {
@@ -155,5 +166,6 @@ module.exports = {
   getUserPlay,
   checkCurState,
   updateStatus,
-  outRoom
+  outRoom,
+  getRandomUser
 }
