@@ -1,0 +1,34 @@
+.chat-container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-input{
+    overflow: auto;
+    width: 80%;
+    height: 50px;
+}
+
+.chat-view{
+    display: flex;
+    width: 100%;
+}
+
+.send-btn{
+    margin-left: 2px;
+    width: fit-content;
+}
+.chat{
+    text-align: start;
+    width: 100%;
+}
+.mess{
+    font-size: 18px;
+    color: darkslategray;
+    margin-left: 3px;
+}
+.name{
+    font-size: 18px;
+    color: darkslategray;
+}
