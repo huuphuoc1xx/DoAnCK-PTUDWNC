@@ -39,11 +39,12 @@ const filterGame = ({ id, player_o, player_x, last_id, page_size }) => {
       LIMIT ${Math.max(+page_size || 0, 10)}`, params);
 }
 const getListMess = (room) => db.load(`SELECT message FROM game WHERE id =?`, [room]).then(res => res[0] && res[0].message);
-const getInfor = (id) => db.load(`SELECT cup, win, lose FROM users WHERE id =?`, [id]).then(res => res[0]);
-const updateCup = (id, cup) => db.edit('users',{cup:cup},{id:id});
-const updateLose = (id, lose) => db.edit('users', {lose: lose}, {id: id});
-const updateWin = (id, win) => db.edit('users', {win:win}, {id:id});
 
+const getInfor = (id) => db.load(`SELECT cup, lose, win FROM users WHERE id = ?`, [id]).then(res => res[0]);
+
+const updateCup = (userId, cup) => db.edit('users',{cup:cup},{id:userId});
+const updateWinChess = (userId, win) => db.edit('users', {win: win}, {id: userId});
+const updateLoseChess = (userId, lose) => db.edit('users',{lose: lose}, {id: userId});
 module.exports = {
   startGame,
   updateGame,
@@ -53,6 +54,6 @@ module.exports = {
   getListMess,
   getInfor,
   updateCup,
-  updateLose,
-  updateWin
+  updateWinChess,
+  updateLoseChess
 }

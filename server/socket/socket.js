@@ -1,6 +1,6 @@
 const passport = require("passport");
 const passportStrategy = require("../config/passport");
-const { startGame, updateGame, getGame, updateUserPlay, getInfor, updateCup, updateLose, updateWin } = require('../models/game');
+const { startGame, updateGame, getGame, updateUserPlay, getListMess, getInfor, updateCup, updateWinChess, updateLoseChess} = require('../models/game');
 const manager = require("./manager");
 passportStrategy(passport);
 
@@ -62,9 +62,9 @@ module.exports = (server) => {
       console.log('START_PLAY');
       const randomUser = await manager.getRandomUser(user, socket);
       console.log(randomUser.user);
-      if (randomUser!=undefined) {
+      if (randomUser != undefined) {
         const room = await startGame({ username_x: user.id });
-        randomUser.socket.room=room;
+        randomUser.socket.room = room;
         randomUser.socket.join(room);
         socket.room = room;
         socket.join(room);
@@ -76,9 +76,9 @@ module.exports = (server) => {
     })
     socket.on("PLAY_CHESS", async (data) => {
       let squares = await getGame(data.room);
-      squares = squares.detail ||"[]";
+      squares = squares.detail || "[]";
       squares = JSON.parse(squares);
-      const exist = squares.find((value) => value==data.chess);
+      const exist = squares.find((value) => value == data.chess);
       if (exist == undefined) {
         const checkCurState = manager.checkCurState(
           data.room,
@@ -102,10 +102,9 @@ module.exports = (server) => {
           };
           await updateGame(update, socket.room);
           if (winner != null) {
-            
             io.to(socket.room).emit("WIN_GAME", { username: user.username, list: winner });
-            const listUserPlay = manager.getUserPlay(data.room);
-            const loser = listUserPlay.find(userPlay => userPlay.userId!=user.id);
+            const listUser = manager.getUserPlay(data.room);
+            const loser = listUser.find(userPlay => userPlay.userId!=user.id);
             handleAfterWin(user.id, loser.userId);
             manager.updateStatus(data.room);
           }
@@ -118,36 +117,36 @@ module.exports = (server) => {
     });
     socket.on('OUT_ROOM', async () => {
       const room = manager.getRoomById(user.id);
-      const listUserPlay = manager.getUserPlay(room.room);
-      const loser = listUserPlay.find(userPlay => userPlay.userId==user.id);
-      const winner = listUserPlay.find(userPlay => userPlay.userId!=user.id);
-      if(loser!=undefined) handleAfterWin(winner.userId, user.id);
+      const listUser = manager.getUserPlay(room.room);
+      const loser = listUser.find(userPlay => userPlay.userId==user.id);
+      const winner = listUser.find(userPlay => userPlay.userId!=user.id)
+      if(loser!=undefined) handleAfterWin(winner.userId, loser.userId);
       manager.outRoom(user.id, updateUserPlay);
     });
     socket.on('SEND_MESSAGE', (mess) => {
       const room = manager.updateMess(user, mess, getListMess, updateUserPlay);
-      if(room){
-        io.to(socket.room).emit("MESSAGE", [{username:user.username, mess: mess}]);
+      if (room) {
+        io.to(socket.room).emit("MESSAGE", [{ username: user.username, mess: mess }]);
       }
     })
   });
 };
+
 const handleAfterWin = async (winnerId, loserId) => {
-  const dataWin = await getInfor(winnerId);
-  const dataLose = await getInfor(loserId);
-  console.log(dataWin);
-  console.log(dataLose);
-  updateWin(winnerId, dataWin.win +1);
-  updateLose(loserId, dataLose.lose +1);
-  let loseCup = dataLose.cup?dataLose.cup-2:0;
-  if(dataLose.cup>dataWin.cup)
-  {
-    updateCup(winnerId, dataWin.cup + 2);
-    updateCup(loserId, loseCup);
+  const dataWinner = await getInfor(winnerId);
+  const dataLoser = await getInfor(loserId);
+  console.log(dataLoser);
+  updateWinChess(winnerId, dataLoser.win +1);
+  updateLoseChess(loserId, dataLoser.lose+1);
+  if (dataWinner.cup < dataLoser) {
+    updateCup(winnerId, dataWinner.cup + 2);
+    updateCup(loserId, dataLoser.cup - 2);
     return;
   }
-  updateCup(winnerId,dataWin.cup +1);
-  updateCup(loserId, loseCup+1);
+  
+  updateCup(winnerId, dataWinner.cup-1);
+  updateCup(loserId, dataLoser.cup+1);
+
 }
 const checkWin = (squaresObject, chess, type) => {
   const squares = {};
@@ -187,7 +186,7 @@ const checkCol = (square, curPos, type) => {
   for (let y0 = curPos.y - 1; y0 >= minY; y0--) {
     if (!square[curPos.x] || square[curPos.x][y0] != type)
       break;
-    list = [{ x:  curPos.x, y: y0 }, ...list];
+    list = [{ x: curPos.x, y: y0 }, ...list];
   }
   if (list.length == 5)
     return list;
