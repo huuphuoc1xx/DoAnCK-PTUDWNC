@@ -12,7 +12,8 @@ export function playReduce(state = {},action){
                 ...state,
                 squares: Array(20 * 20).fill(null),
                 listUserPlay: [],
-                listUserJoinGame: []
+                listUserJoinGame: [],
+                listMessage: []
             }
         case PLAYGAMECONTANTS.START_GAME:
             return {
@@ -20,10 +21,10 @@ export function playReduce(state = {},action){
                 squares: Array(20 * 20).fill(null),
                 listUserPlay:[],
                 listUserJoinGame: [],
-                room: null
+                room: null,
+                listMessage: []
             }
         case PLAYGAMECONTANTS.FAST_PLAY:
-            alert('fast_play')
             state.squares = Array(20 * 20).fill(null);
             state.listUserPlay = [];
             state.listUserJoinGame = [];
@@ -33,12 +34,9 @@ export function playReduce(state = {},action){
              }
         case PLAYGAMECONTANTS.START_FAST:
             console.log("START_LAY", action.data.list);
-            
-            return {
-                ...state,
-                listUserPlay: [...state.listUserPlay, ...action.data.list],
-                room: action.data.room
-            }
+            state.listUserPlay = [...state.listUserPlay, ...action.data.list];
+            state.room = action.data.room
+            return history.push('/playgame');
         case PLAYGAMECONTANTS.GET_PLAY_CHESS:
             const squares = state.squares;
             squares[action.data.chess] = action.data.value;
@@ -64,7 +62,6 @@ export function playReduce(state = {},action){
                 ...state
             }
         case PLAYGAMECONTANTS.WIN_GAME:
-            alert('eein');
             return {
                 ...state,
                 user_win: action.data.username
@@ -73,6 +70,11 @@ export function playReduce(state = {},action){
             return {
                 ...state,
                 room:null
+            }
+        case PLAYGAMECONTANTS.MESSAGE:
+            return{
+                ...state,
+                listMessage: [...state.listMessage, ...action.data]
             }
         default:
             return {

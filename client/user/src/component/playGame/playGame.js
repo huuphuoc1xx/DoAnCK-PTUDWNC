@@ -11,16 +11,20 @@ import { userService } from '../../services/users';
 import { PLAYGAMECONTANTS } from "../../constans/playGame.contants";
 import { ACTIONSOCKET } from "../../constans/socket.contants";
 import { Redirect } from 'react-router-dom';
+import Chat from './chat/chat';
+import { socket } from '../../socket/socket';
 export const PlayGame = () => {
   const player = null;
   const user_win = useSelector(state => state.playReduce.user_win);
   const userPlayer = useSelector(state => state.playReduce.listUserPlay);
   const room = useSelector(state => state.playReduce.room);
+  const listMessage = useSelector(state => state.playReduce.listMessage);
   const dispatch = useDispatch();
   const playGame = () => {
     dispatch({ type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.START_PLAY, data: room });
   }
   useEffect(() => {
+    dispatch({type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.MESSAGE});
     return () => {
       dispatch({type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.OUT_ROOM});
     }
@@ -43,7 +47,7 @@ export const PlayGame = () => {
                 margin: "3px"
               }}> Người chơi {index + 1} <Item user={user}></Item> </div>)}
             </div>
-            <div className='flex-chat'>chat</div>
+            <div className='flex-chat'><Chat listMessage = {listMessage}/></div>
           </div>
         </NavHome>
       </AuthProvider>
