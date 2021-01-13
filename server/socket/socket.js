@@ -1,6 +1,6 @@
 const passport = require("passport");
 const passportStrategy = require("../config/passport");
-const { startGame, updateGame, getGame, updateUserPlay } = require('../models/game');
+const { startGame, updateGame, getGame, updateUserPlay, getListMess } = require('../models/game');
 const manager = require("./manager");
 passportStrategy(passport);
 
@@ -82,23 +82,23 @@ module.exports = (server) => {
       if (exist == undefined) {
         const checkCurState = manager.checkCurState(
           data.room,
-          data.chess,
           user
         );
         if (checkCurState) {
+          const turn = checkCurState == 1 ? "X" : "O";
           io.to(socket.room).emit("GET_PLAY_CHESS", {
             chess: data.chess,
-            value: checkCurState % 2 ? "O" : "X",
+            value: turn,
           });
           const winner = checkWin(
             squares,
             data.chess,
-            checkCurState % 2 ? "X" : "O"
+            turn
           );
           squares.push(data.chess);
           const update = {
             detail: JSON.stringify(squares),
-            result: winner ? (checkCurState % 2 ? "X" : "O") : null,
+            result: winner ? (turn) : null,
           };
           await updateGame(update, socket.room);
           if (winner != null) {
@@ -118,7 +118,7 @@ module.exports = (server) => {
       manager.outRoom(user.id);
     });
     socket.on('SEND_MESSAGE', (mess) => {
-      const room = manager.updateMess(user, mess);
+      const room = manager.updateMess(user, mess, getListMess, updateUserPlay);
       if(room){
         io.to(socket.room).emit("MESSAGE", [{username:user.username, mess: mess}]);
       }

@@ -5,7 +5,6 @@ let listUser = [];
 let listRoom = [];
 
 let listRandom = [];
-const { startGame, updateGame, getGame, updateUserPlay } = require('../models/game');
 const addUser = (user, socketId) => {
   const curUser = listUser.find(value => value.userId === user.id);
   if (!curUser) {
@@ -70,7 +69,7 @@ const addPlayer = (room, user, socketId) => {
   const index = listRoom.findIndex(value => value.room == room);
   if (listRoom[index].status) return false;
   if (user.id == listRoom[index].user_x.userId) return false;
-  if (index >= 0){
+  if (index >= 0) {
     const user_o = {
       userId: user.id,
       username: user.username,
@@ -97,8 +96,9 @@ const checkCurState = (room, user) => {
   if (!roomInfo) return false;
   const { status, user_o, user_x } = roomInfo;
   if (status == 0) return false;
-  if (status % 2 == 1 && user.id == user_o.userId) return false;
-  if ((status % 2 == 0) && user.id == user_x.userId) return false;
+  if (status == 1 && user.id == user_o.userId) return false;
+  if ((status == 2) && user.id == user_x.userId) return false;
+  roomInfo.status = status % 2 + 1;
   return status;
 }
 const updateStatus = (room) => {
@@ -148,17 +148,16 @@ const getRandomUser = async (user, socket) => {
   listRandom.splice(0, 1);
   return userRandom;
 }
-const updateListChat = async (username, mess, room) => {
+const updateListChat = async (username, mess, room, getListMess, updateUserPlay) => {
   const listMessage = JSON.parse((await getListMess(room)) || '[]');
-  listMessag.push({username, mess});
+  listMessage.push({ username, mess });
   const data = JSON.stringify(listMessage);
   await updateUserPlay('message', data, room);
 }
-const updateMess = async (user, mess) => {
+const updateMess = async (user, mess, getListMess, updateUserPlay) => {
   const roomInfo = getRoomById(user.id);
-  if(!roomInfo) return false;
-  console.log(updateListChat);
-  const p =await  updateListChat(user.username, mess, roomInfo.room);
+  if (!roomInfo) return false;
+  const p = await updateListChat(user.username, mess, roomInfo.room, getListMess, updateUserPlay);
   return true;
 }
 const getRoomByUser = (socketId) => users.find((user) => user.socketId === socketId);
