@@ -143,8 +143,9 @@ const handleAfterWin = async (winnerId, loserId) => {
     updateCup(loserId, dataLoser.cup - 2);
     return;
   }
-  updateCup(winnerId, dataWinner.cup-1);
-  updateCup(loserId, dataLoser.cup+1);
+  const cupLose = dataLoser.cup?dataLoser.cup-1:0;
+  updateCup(winnerId, dataWinner.cup+1);
+  updateCup(loserId, cupLose);
 
 }
 const checkWin = (squaresObject, chess, type) => {
