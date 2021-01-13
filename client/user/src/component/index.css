@@ -27,6 +27,6 @@
   padding-right: 10px;
   border: black;
   height: 3rem;
-  width: 10rem;
-  max-width: 10rem;
+  width: fit-content;
+  min-width: 10rem;
 }
