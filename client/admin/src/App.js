@@ -15,15 +15,21 @@ function App() {
         <Switch>
           <PopupProvider>
             <Route path="/login" component={Login}></Route>
-            <HomeProvider>
-              <Route exact path="/list-user">
+            <Route exact path="/list-user">
+              <HomeProvider>
                 <ListUser></ListUser>
-              </Route>
-              <Route exact path="/history">
+              </HomeProvider>
+            </Route>
+            <Route exact path="/history">
+              <HomeProvider>
                 <History></History>
-              </Route>
-              <Redirect from="/" to="/list-user" />
-            </HomeProvider>
+              </HomeProvider>
+            </Route>
+            <Route exact path="/">
+              <HomeProvider>
+                <ListUser></ListUser>
+              </HomeProvider>
+            </Route>
           </PopupProvider>
         </Switch>
       </Router>

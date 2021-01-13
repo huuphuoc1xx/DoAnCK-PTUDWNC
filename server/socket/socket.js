@@ -127,7 +127,7 @@ const checkWin = (squaresObject, chess, type) => {
     squares[x] = squares[x] || {};
     squares[x][y] = Number(key) % 2 ? 'O' : 'X';
   });
-  const curPos = { x: chess / 20, y: chess % 20 };
+  const curPos = { x: Math.floor(chess / 20), y: chess % 20 };
   const args = [squares, curPos, type];
   return checkRow(...args) || checkCol(...args) || checkDiag(...args) || checkSubDiag(...args);
 };
@@ -140,18 +140,16 @@ const checkRow = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: curPos.y }, ...list];
   }
-  if (list.length == 4
-  )
+  if (list.length == 5)
     return list;
   for (let x0 = curPos.x + 1; x0 <= maxX; x0++) {
     if (!square[x0] || square[x0][curPos.y] != type)
       break;
     list.push({ x: x0, y: curPos.y });
-    if (list.length == 4
-    )
+    if (list.length == 5)
       break;
   }
-  return list.length == 4 ? list : null;
+  return list.length == 5 ? list : null;
 };
 const checkCol = (square, curPos, type) => {
   const maxY = Math.min(19, curPos.y + 4);
@@ -162,19 +160,17 @@ const checkCol = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: curPos.x }, ...list];
   }
-  if (list.length == 4
-  )
+  if (list.length == 5)
     return list;
 
   for (let y0 = curPos.y + 1; y0 <= maxY; y0++) {
     if (!square[curPos.x] || square[curPos.x][y0] != type)
       break;
     list.push({ x: x0, y: curPos.x });
-    if (list.length == 4
-    )
+    if (list.length == 5)
       break;
   }
-  return list.length == 4 ? list : null;
+  return list.length == 5 ? list : null;
 };
 const checkDiag = (square, curPos, type) => {
   const maxX = Math.min(19, curPos.x + 4);
@@ -187,19 +183,17 @@ const checkDiag = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: y0 }, ...list];
   }
-  if (list.length == 4
-  )
+  if (list.length == 5)
     return list;
 
   for (let x0 = curPos.x + 1, y0 = curPos.y + 1; y0 <= maxY, x0 <= maxX; y0++, x0++) {
     if (!square[x0] || square[x0][y0] != type)
       break;
     list.push({ x: x0, y: y0 });
-    if (list.length == 4
-    )
+    if (list.length == 5)
       break;
   }
-  return list.length == 4 ? list : null;
+  return list.length == 5 ? list : null;
 };
 const checkSubDiag = (square, curPos, type) => {
   const maxX = Math.min(19, curPos.x + 4);
@@ -212,16 +206,14 @@ const checkSubDiag = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: y0 }, ...list];
   }
-  if (list.length == 4
-  )
+  if (list.length == 5)
     return list;
   for (let x0 = curPos.x + 1, y0 = curPos.y - 1; y0 <= maxY, x0 >= minX; y0--, x0++) {
     if (!square[x0] || square[x0][y0] != type)
       break;
     list.push({ x: x0, y: y0 });
-    if (list.length == 4
-    )
+    if (list.length == 5)
       break;
   }
-  return list.length == 4 ? list : null;
+  return list.length == 5 ? list : null;
 };

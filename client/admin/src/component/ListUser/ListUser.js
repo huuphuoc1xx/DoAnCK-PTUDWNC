@@ -16,15 +16,35 @@ const columns = [
     selector: "username",
   },
   {
-    name: "Name",
-    selector: "name"
+    name: "Email",
+    selector: "email",
   },
   {
-    name: "Role",
-    selector: "role"
-
-  }
+    name: "Name",
+    selector: "name",
+  },
+  {
+    name: "Active",
+    cell: (row) => (
+      <input
+        type="checkbox"
+        defaultChecked={row.status === "active"}
+        onClick={async (e) => {
+          const res = await updateUser({
+            id: row.id,
+            status: e.target.checked ? "active" : "deactive",
+          });
+          if (res.data.code != 0)
+            e.preventDefault();
+        }}
+      />
+    ),
+  },
 ];
+
+const updateUser = ({ id, status }) => {
+  return Axios.put(`${config.dev.path}/user`, { id, status });
+};
 
 function ListUser() {
   const [listUser, setListUser] = useState([]);
@@ -32,14 +52,12 @@ function ListUser() {
   const [filtData, setFiltData] = useState({});
   const [filterData, setFilterData] = useState(false);
   useEffect(() => {
-    Axios.get(
-      `${config.dev.path}/list-user`, {
+    Axios.get(`${config.dev.path}/user`, {
       params: {
         ...filterData,
-        last_id: lastIdStack[lastIdStack.length - 1]
-      }
-    }
-    ).then((res) => {
+        last_id: lastIdStack[lastIdStack.length - 1],
+      },
+    }).then((res) => {
       if (res.data.code === 0) {
         setListUser(res.data.data.users);
       }
@@ -48,8 +66,7 @@ function ListUser() {
 
   const nextPage = () => {
     const temp = [...lastIdStack];
-    if (listUser.length)
-      temp.push(listUser[listUser.length - 1].id);
+    if (listUser.length) temp.push(listUser[listUser.length - 1].id);
     setLastIdStack(temp);
   };
 
@@ -62,7 +79,7 @@ function ListUser() {
   const filter = () => {
     setFilterData(filtData);
     setLastIdStack([0]);
-  }
+  };
 
   return (
     <div>
@@ -94,15 +111,13 @@ function ListUser() {
             }}
           />
           <div className="d-flex justify-content-end mt-2">
-            <Button variant="dark" onClick={filter}>Lọc</Button>
+            <Button variant="dark" onClick={filter}>
+              Lọc
+            </Button>
           </div>
         </div>
       </div>
-      <DataTable
-        data={listUser}
-        columns={columns}
-        striped
-      ></DataTable>
+      <DataTable data={listUser} columns={columns} striped></DataTable>
       <div className="d-flex justify-content-end mt-1 mr-2">
         <Pagination>
           <Pagination.First onClick={() => setLastIdStack([0])} />

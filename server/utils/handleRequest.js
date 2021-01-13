@@ -22,8 +22,8 @@ module.exports = {
     }
   },
   handleWriteRequest: async ({ req, res, sourceInput, fields, io, resource }) => {
-    const obj = {};
-    if (sourceInput) utils.dataMapper(req[sourceInput], fields);
+    let obj = {};
+    if (sourceInput) obj = utils.dataMapper(req[sourceInput], fields);
 
     try {
       const result = await io(obj);

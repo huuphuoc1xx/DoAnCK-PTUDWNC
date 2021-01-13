@@ -1,8 +1,13 @@
 import React from "react";
 import { Navbar } from "react-bootstrap";
-import { Link } from "react-router-dom";
-const onLogout=()=>{};
+import { Link, useHistory } from "react-router-dom";
+import Cookies from "js-cookie";
 function Nav(props) {
+  const history = useHistory();
+  const onLogout=()=>{
+    Cookies.remove("jwt");
+    window.location.reload();
+  };
   return (
     <div>
       <Navbar className="nav-bar">

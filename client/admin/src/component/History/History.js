@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import config from "../../config/config.json";
 import { Button, Form, Pagination } from "react-bootstrap";
+import ShowDetail from "./ShowDetail";
 
 const columns = [
   {
@@ -22,6 +23,10 @@ const columns = [
   {
     name: "Winner",
     selector: "winner"
+  },
+  {
+    name: "Detail",
+    cell: row => <ShowDetail info={row}/>
   }
 ];
 
@@ -94,6 +99,7 @@ function History() {
         data={history}
         columns={columns}
         striped
+        highlightOnHover
       ></DataTable>
       <div className="d-flex justify-content-end mt-1 mr-2">
         <Pagination>
