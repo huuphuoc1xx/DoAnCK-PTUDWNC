@@ -1,5 +1,4 @@
 
-
 let listUser = [];
 
 let listRoom = [];
@@ -110,10 +109,9 @@ const updateStatus = (room) => {
   }
 }
 const getRoomById = (userId) => {
-  console.log(listRoom.find(value => value.listUser.find(user => user.userId == userId)))
   return listRoom.find(value => value.listUser.find(user => user.userId == userId));
 }
-const outRoom = (userId) => {
+const outRoom = (userId, updateUserPlay) => {
   const roomInfo = getRoomById(userId);
   if (!roomInfo) return;
   roomInfo.listUser = roomInfo.listUser.filter(user => user.userId != userId);
@@ -177,5 +175,6 @@ module.exports = {
   updateStatus,
   outRoom,
   getRandomUser,
-  updateMess
+  updateMess,
+  getRoomById
 }
