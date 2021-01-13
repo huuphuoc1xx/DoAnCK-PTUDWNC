@@ -109,7 +109,6 @@ const updateStatus = (room) => {
   }
 }
 const getRoomById = (userId) => {
-  console.log(listRoom.find(value => value.listUser.find(user => user.userId == userId)))
   return listRoom.find(value => value.listUser.find(user => user.userId == userId));
 }
 const outRoom = (userId, updateUserPlay) => {
