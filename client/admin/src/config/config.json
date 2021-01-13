@@ -1,3 +1,6 @@
 {
-    "base_path":"http://localhost:8080"
+    "dev":{
+        "path":"http://localhost:8080/admin",
+        "socket":"wss://retro-be.herokuapp.com"
+    }
 }
