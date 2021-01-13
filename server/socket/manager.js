@@ -3,7 +3,8 @@
 let listUser = [];
 
 let listRoom = [];
-
+const { InsufficientStorage } = require('http-errors');
+const { startGame, updateGame, getGame, updateUserPlay } = require('../models/game');
 const addUser = (user, socketId) => {
   const index = listUser.findIndex(value => value.userId === user.id);
   if (index < 0 || isNaN(index)) {
@@ -13,28 +14,29 @@ const addUser = (user, socketId) => {
   }
 }
 const addRoom = (room, user, socketId) => {
-  const index = listRoom.findIndex(value => value.room === room&&value.userId===user.id);
+  const index = listRoom.findIndex(value => value.room === room && value.userId === user.id);
   if (index < 0 || isNaN(index)) {
-    const user_x  = {
+    const user_x = {
       userId: user.id,
       username: user.username,
       socketId: socketId,
     };
     const user_o = false;
     let listUser = [user_x];
-    listRoom.push({user_o:user_o, user_x:user_x, room: room, listUser:listUser, status:0});
+    listRoom.push({ user_o: user_o, user_x: user_x, room: room, listUser: listUser, status: 0 });
   } else {
     listRoom[index].room = room;
   }
 }
 const addRoomExits = (room, user, socketId) => {
-  const userAdd  = {
+  const userAdd = {
     userId: user.id,
     username: user.username,
     socketId: socketId,
   };
-  const index = listRoom.findIndex(value => value.room==room);
-  
+  const index = listRoom.findIndex(value => value.room == room);
+  console.log(index)
+  if(index==-1) return;
   listRoom[index].listUser.push(userAdd);
 }
 const removeUser = (userId) => {
@@ -52,28 +54,30 @@ const getListOnline = () => {
 }
 const getRoomByOne = (room) => {
   return listRoom.forEach(value => {
-    if(value.room == room) return value.listUser;
+    if (value.room == room) return value.listUser;
   });
 }
 const getRoom = () => {
-  if(!listRoom.length) return [];
+  if (!listRoom.length) return [];
   const result = listRoom.reduce((listResult, room) => {
-    listResult.push({room: room.room, status: room.status});
+    listResult.push({ room: room.room, status: room.status });
     return listResult;
   }, []);
   return result;
 }
 const addPlayer = (room, user, socketId) => {
-  const index = listRoom.findIndex(value => value.room==room);
-  if(index>=0&&!listRoom[index].status&&user.id!=listRoom[index].user_x.userId);
+  const index = listRoom.findIndex(value => value.room == room);
+  if (listRoom[index].status) return;
+  if (user.id == listRoom[index].user_x.userId) return;
+  if (index >= 0);
   {
     const user_o = {
-    userId: user.id,
-    username: user.username,
-    socketId: socketId,
+      userId: user.id,
+      username: user.username,
+      socketId: socketId,
     }
-    listRoom[index].user_o=user_o;
-    listRoom[index].status=1;
+    listRoom[index].user_o = user_o;
+    listRoom[index].status = 1;
     return listRoom[index].room;
   }
   return false
@@ -81,33 +85,60 @@ const addPlayer = (room, user, socketId) => {
 const getUserPlay = (room) => {
   let listUserPlay = [];
   listRoom.forEach(value => {
-    if(value.room == room){
+    if (value.room == room) {
       listUserPlay.push(value.user_x);
-      value.user_o?listUserPlay.push(value.user_o):null;
+      value.user_o ? listUserPlay.push(value.user_o) : null;
     }
   });
   return listUserPlay;
 }
 const checkCurState = (room, chess, user) => {
-  const index = listRoom.findIndex(value => value.room==room);
-  if(index>=0)
-  {
-    if(!listRoom[index].status) return false;
-    if(listRoom[index].status%2==1&&user.id==listRoom[index].user_o.userId) return false;
-    if((listRoom[index].status%2==0)&&user.id==listRoom[index].user_x.userId) return false;
-    listRoom[index].status=listRoom[index].status%2?2:1;
+  const index = listRoom.findIndex(value => value.room == room);
+  if (index >= 0) {
+    if (!listRoom[index].status) return false;
+    if (listRoom[index].status % 2 == 1 && user.id == listRoom[index].user_o.userId) return false;
+    if ((listRoom[index].status % 2 == 0) && user.id == listRoom[index].user_x.userId) return false;
+    listRoom[index].status = listRoom[index].status % 2 ? 2 : 1;
     return listRoom[index].status;
   }
   return false;
 }
 const updateStatus = (room) => {
-  const index = listRoom.findIndex(value => value.room==room);
-  if(index>=0)
-  {
-    let newListRoom = listRoom.slice(0,index);
-    newListRoom = [...newListRoom, listRoom.slice(index+1,listRoom.length)[0]];
+  const index = listRoom.findIndex(value => value.room == room);
+  if (index >= 0) {
+    let newListRoom = listRoom.slice(0, index);
+    newListRoom = [...newListRoom, listRoom.slice(index + 1, listRoom.length)[0]];
     listRoom = newListRoom;
   }
+}
+const getRoomById = (userId) => {
+  return listRoom.find(value => value.listUser.find(user => user.userId == userId));
+}
+const outRoom = (userId) => {
+  const roomInfo = getRoomById(userId);
+  if (!roomInfo) return;
+  roomInfo.listUser = roomInfo.listUser.filter(user => user.userId != userId);
+  console.log('info', roomInfo);
+  if (roomInfo.listUser.length === 0) {
+    listRoom = listRoom.filter(value => value.room != roomInfo.room);
+    return;
+  }
+
+  let winner = null;
+  switch (userId) {
+    case roomInfo.user_x.userId:
+      winner = 'X';
+      roomInfo.user_x = null;
+      break;
+    case roomInfo.user_o.userId:
+      winner = 'O';
+      roomInfo.user_o = null;
+      break;
+    default:
+      break;
+  };
+  if (!winner) return;
+  updateUserPlay('result', winner, roomInfo.room);
 }
 const getRoomByUser = (socketId) => users.find((user) => user.socketId === socketId);
 module.exports = {
@@ -123,5 +154,6 @@ module.exports = {
   addPlayer,
   getUserPlay,
   checkCurState,
-  updateStatus
+  updateStatus,
+  outRoom
 }

@@ -52,13 +52,30 @@ module.exports = (server) => {
     });
     socket.on("START_PLAY", async (room) => {
       if (manager.addPlayer(room, user, socket.id)) {
-        const result = updateUserPlay("player_o", user.id, room);
-        io.to(socket.room).emit("USER_PLAY_GAME", { list: [user], room: room });
+        const result = await updateUserPlay("player_o", user.id, room);
+        const listUser = manager.getUserPlay(room);
+        io.to(socket.room).emit("USER_PLAY_GAME", { list: listUser, room: room });
       }
     });
+    socket.on('FAST_PLAY', async () => {
+      console.log('START_PLAY');
+      const randomUser = await manager.getRandomUser(user, socket);
+      console.log(randomUser.user);
+      if (randomUser!=undefined) {
+        const room = await startGame({ username_x: user.id });
+        randomUser.socket.room=room;
+        randomUser.socket.join(room);
+        socket.room = room;
+        socket.join(room);
+        manager.addRoom(room, user, socket.id);
+        manager.addRoomExits(room, randomUser.user, randomUser.socket);
+        const listUser = manager.getUserPlay(room);
+        io.to(socket.room).emit("START_FAST", { list: listUser, room: room });
+      }
+    })
     socket.on("PLAY_CHESS", async (data) => {
       let squares = await getGame(data.room);
-      squares = squares.detail || "{}";
+      squares = squares.detail || '{}';
       squares = JSON.parse(squares);
       const exist = Object.values(squares).find((value) => value == data.chess);
       if (exist == undefined) {
@@ -85,6 +102,7 @@ module.exports = (server) => {
           };
           await updateGame(update, socket.room);
           if (winner != null) {
+            console.log(winner)
             io.to(socket.room).emit("WIN_GAME", { username: user.username, list: winner });
             manager.updateStatus(data.room);
           }
@@ -95,6 +113,10 @@ module.exports = (server) => {
       const result = manager.getRoom();
       socket.emit("GET_NEW_CHESSBOARD", result);
     });
+    socket.on('OUT_ROOM', async () => {
+      console.log('out room');
+      manager.outRoom(user.id);
+    })
   });
 };
 
@@ -118,16 +140,18 @@ const checkRow = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: curPos.y }, ...list];
   }
-  if (list.length == 5)
+  if (list.length == 4
+  )
     return list;
   for (let x0 = curPos.x + 1; x0 <= maxX; x0++) {
     if (!square[x0] || square[x0][curPos.y] != type)
       break;
     list.push({ x: x0, y: curPos.y });
-    if (list.length == 5)
+    if (list.length == 4
+    )
       break;
   }
-  return list.length == 5 ? list : null;
+  return list.length == 4 ? list : null;
 };
 const checkCol = (square, curPos, type) => {
   const maxY = Math.min(19, curPos.y + 4);
@@ -138,17 +162,19 @@ const checkCol = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: curPos.x }, ...list];
   }
-  if (list.length == 5)
+  if (list.length == 4
+  )
     return list;
 
   for (let y0 = curPos.y + 1; y0 <= maxY; y0++) {
     if (!square[curPos.x] || square[curPos.x][y0] != type)
       break;
     list.push({ x: x0, y: curPos.x });
-    if (list.length == 5)
+    if (list.length == 4
+    )
       break;
   }
-  return list.length == 5 ? list : null;
+  return list.length == 4 ? list : null;
 };
 const checkDiag = (square, curPos, type) => {
   const maxX = Math.min(19, curPos.x + 4);
@@ -161,17 +187,19 @@ const checkDiag = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: y0 }, ...list];
   }
-  if (list.length == 5)
+  if (list.length == 4
+  )
     return list;
 
   for (let x0 = curPos.x + 1, y0 = curPos.y + 1; y0 <= maxY, x0 <= maxX; y0++, x0++) {
     if (!square[x0] || square[x0][y0] != type)
       break;
     list.push({ x: x0, y: y0 });
-    if (list.length == 5)
+    if (list.length == 4
+    )
       break;
   }
-  return list.length == 5 ? list : null;
+  return list.length == 4 ? list : null;
 };
 const checkSubDiag = (square, curPos, type) => {
   const maxX = Math.min(19, curPos.x + 4);
@@ -184,14 +212,16 @@ const checkSubDiag = (square, curPos, type) => {
       break;
     list = [{ x: x0, y: y0 }, ...list];
   }
-  if (list.length == 5)
+  if (list.length == 4
+  )
     return list;
   for (let x0 = curPos.x + 1, y0 = curPos.y - 1; y0 <= maxY, x0 >= minX; y0--, x0++) {
     if (!square[x0] || square[x0][y0] != type)
       break;
     list.push({ x: x0, y: y0 });
-    if (list.length == 5)
+    if (list.length == 4
+    )
       break;
   }
-  return list.length == 5 ? list : null;
+  return list.length == 4 ? list : null;
 };

@@ -1,5 +1,5 @@
 import { PLAYGAMECONTANTS } from '../constans/playGame.contants';
-
+import { history } from '../helpers/history';
 export function playReduce(state = {},action){
     switch (action.type){
         case PLAYGAMECONTANTS.USER_JOIN_GAME:
@@ -19,7 +19,25 @@ export function playReduce(state = {},action){
                 ...state,
                 squares: Array(20 * 20).fill(null),
                 listUserPlay:[],
-                listUserJoinGame: []
+                listUserJoinGame: [],
+                room: null
+            }
+        case PLAYGAMECONTANTS.FAST_PLAY:
+            alert('fast_play')
+            state.squares = Array(20 * 20).fill(null);
+            state.listUserPlay = [];
+            state.listUserJoinGame = [];
+            state.room = null;
+            return {
+                ...state,
+             }
+        case PLAYGAMECONTANTS.START_FAST:
+            console.log("START_LAY", action.data.list);
+            
+            return {
+                ...state,
+                listUserPlay: [...state.listUserPlay, ...action.data.list],
+                room: action.data.room
             }
         case PLAYGAMECONTANTS.GET_PLAY_CHESS:
             const squares = state.squares;
@@ -30,7 +48,7 @@ export function playReduce(state = {},action){
                 squares: [...state.squares]
             } 
         case PLAYGAMECONTANTS.USER_PLAY_GAME:
-            if(state.room!=action.data.room) state.listUserPlay = [];
+            state.listUserPlay = [];
             return{
                 ...state,
                 listUserPlay: [...state.listUserPlay, ...action.data.list],
@@ -46,9 +64,15 @@ export function playReduce(state = {},action){
                 ...state
             }
         case PLAYGAMECONTANTS.WIN_GAME:
+            alert('eein');
             return {
                 ...state,
                 user_win: action.data.username
+            }
+        case PLAYGAMECONTANTS.OUT_ROOM:
+            return {
+                ...state,
+                room:null
             }
         default:
             return {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Game from './game/game';
 import NavHome from "../Nav";
 import './playGame.css';
@@ -12,7 +12,7 @@ import { PLAYGAMECONTANTS } from "../../constans/playGame.contants";
 import { ACTIONSOCKET } from "../../constans/socket.contants";
 import { Redirect } from 'react-router-dom';
 export const PlayGame = () => {
-  const player = useSelector(state => state.playReduce.x);
+  const player = null;
   const user_win = useSelector(state => state.playReduce.user_win);
   const userPlayer = useSelector(state => state.playReduce.listUserPlay);
   const room = useSelector(state => state.playReduce.room);
@@ -20,7 +20,11 @@ export const PlayGame = () => {
   const playGame = () => {
     dispatch({ type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.START_PLAY, data: room });
   }
-
+  useEffect(() => {
+    return () => {
+      dispatch({type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.OUT_ROOM});
+    }
+  },[])
   if(!userPlayer)
     return <Redirect to="/"/>;
   return (
