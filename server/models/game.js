@@ -1,3 +1,5 @@
+const { use } = require('passport');
+const { updateStatus } = require('../socket/manager');
 const db = require('../utils/db');
 
 const startGame = ({ username_x }) => {
@@ -36,10 +38,14 @@ const filterGame = ({ id, player_o, player_x, last_id, page_size }) => {
       ORDER BY id DESC 
       LIMIT ${Math.max(+page_size || 0, 10)}`, params);
 }
+const getListMess = (room) => db.load(`SELECT message FROM game WHERE id =?`, [room]).then(res => res[0] && res[0].message);
+
+
 module.exports = {
   startGame,
   updateGame,
   getGame,
   updateUserPlay,
-  filterGame
+  filterGame,
+  getListMess
 }
