@@ -51,6 +51,7 @@ module.exports = (server) => {
       io.to(socket.room).emit("USER_JOIN_GAME", manager.getRoomByOne(room));
     });
     socket.on("START_PLAY", async (room) => {
+      console.log("START_PLAY");
       if (manager.addPlayer(room, user, socket.id)) {
         const result = await updateUserPlay("player_o", user.id, room);
         const listUser = manager.getUserPlay(room);
@@ -75,16 +76,15 @@ module.exports = (server) => {
     })
     socket.on("PLAY_CHESS", async (data) => {
       let squares = await getGame(data.room);
-      squares = squares.detail || '{}';
+      squares = squares.detail ||"[]";
       squares = JSON.parse(squares);
-      const exist = Object.values(squares).find((value) => value == data.chess);
+      const exist = squares.find((value) => value==data.chess);
       if (exist == undefined) {
         const checkCurState = manager.checkCurState(
           data.room,
           data.chess,
           user
         );
-        const count = Object.keys(squares).length;
         if (checkCurState) {
           io.to(socket.room).emit("GET_PLAY_CHESS", {
             chess: data.chess,
@@ -93,12 +93,12 @@ module.exports = (server) => {
           const winner = checkWin(
             squares,
             data.chess,
-            checkCurState % 2 ? "O" : "X"
+            checkCurState % 2 ? "X" : "O"
           );
-          squares[count] = data.chess;
+          squares.push(data.chess);
           const update = {
             detail: JSON.stringify(squares),
-            result: winner ? (checkCurState % 2 ? "O" : "X") : null,
+            result: winner ? (checkCurState % 2 ? "X" : "O") : null,
           };
           await updateGame(update, socket.room);
           if (winner != null) {
@@ -128,10 +128,10 @@ module.exports = (server) => {
 
 const checkWin = (squaresObject, chess, type) => {
   const squares = {};
-  Object.keys(squaresObject).forEach((key) => {
-    const x = parseInt(squaresObject[key] / 20), y = squaresObject[key] % 20;
+  squaresObject.forEach((item, index) => {
+    const x = Math.floor(item / 20), y = item % 20;
     squares[x] = squares[x] || {};
-    squares[x][y] = Number(key) % 2 ? 'O' : 'X';
+    squares[x][y] = Number(index) % 2 ? 'O' : 'X';
   });
   const curPos = { x: Math.floor(chess / 20), y: chess % 20 };
   const args = [squares, curPos, type];
@@ -164,7 +164,7 @@ const checkCol = (square, curPos, type) => {
   for (let y0 = curPos.y - 1; y0 >= minY; y0--) {
     if (!square[curPos.x] || square[curPos.x][y0] != type)
       break;
-    list = [{ x: x0, y: curPos.x }, ...list];
+    list = [{ x:  curPos.x, y: y0 }, ...list];
   }
   if (list.length == 5)
     return list;
@@ -172,7 +172,7 @@ const checkCol = (square, curPos, type) => {
   for (let y0 = curPos.y + 1; y0 <= maxY; y0++) {
     if (!square[curPos.x] || square[curPos.x][y0] != type)
       break;
-    list.push({ x: x0, y: curPos.x });
+    list.push({ x: curPos.x, y: y0 });
     if (list.length == 5)
       break;
   }

@@ -68,10 +68,9 @@ const getRoom = () => {
 }
 const addPlayer = (room, user, socketId) => {
   const index = listRoom.findIndex(value => value.room == room);
-  if (listRoom[index].status) return;
-  if (user.id == listRoom[index].user_x.userId) return;
-  if (index >= 0);
-  {
+  if (listRoom[index].status) return false;
+  if (user.id == listRoom[index].user_x.userId) return false;
+  if (index >= 0){
     const user_o = {
       userId: user.id,
       username: user.username,
@@ -97,7 +96,7 @@ const checkCurState = (room, user) => {
   const roomInfo = listRoom.find(value => value.room == room);
   if (!roomInfo) return false;
   const { status, user_o, user_x } = roomInfo;
-  if (!status) return false;
+  if (status == 0) return false;
   if (status % 2 == 1 && user.id == user_o.userId) return false;
   if ((status % 2 == 0) && user.id == user_x.userId) return false;
   roomInfo.status = status % 2 + 1;
