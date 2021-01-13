@@ -100,8 +100,8 @@ const checkCurState = (room, user) => {
   if (!status) return false;
   if (status % 2 == 1 && user.id == user_o.userId) return false;
   if ((status % 2 == 0) && user.id == user_x.userId) return false;
-  status = status % 2 + 1;
-  return status;
+  roomInfo.status = status % 2 + 1;
+  return roomInfo.status;
 }
 const updateStatus = (room) => {
   const index = listRoom.findIndex(value => value.room == room);
