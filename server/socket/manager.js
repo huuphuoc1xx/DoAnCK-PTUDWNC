@@ -112,6 +112,7 @@ const updateStatus = (room) => {
   }
 }
 const getRoomById = (userId) => {
+  console.log(listRoom.find(value => value.listUser.find(user => user.userId == userId)))
   return listRoom.find(value => value.listUser.find(user => user.userId == userId));
 }
 const outRoom = (userId) => {
@@ -149,6 +150,19 @@ const getRandomUser = async (user, socket) => {
   listRandom.splice(0, 1);
   return userRandom;
 }
+const updateListChat = async (username, mess, room) => {
+  const listMessage = JSON.parse((await getListMess(room)) || '[]');
+  listMessag.push({username, mess});
+  const data = JSON.stringify(listMessage);
+  await updateUserPlay('message', data, room);
+}
+const updateMess = async (user, mess) => {
+  const roomInfo = getRoomById(user.id);
+  if(!roomInfo) return false;
+  console.log(updateListChat);
+  const p =await  updateListChat(user.username, mess, roomInfo.room);
+  return true;
+}
 const getRoomByUser = (socketId) => users.find((user) => user.socketId === socketId);
 module.exports = {
   addUser,
@@ -165,5 +179,6 @@ module.exports = {
   checkCurState,
   updateStatus,
   outRoom,
-  getRandomUser
+  getRandomUser,
+  updateMess
 }

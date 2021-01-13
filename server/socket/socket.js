@@ -1,7 +1,7 @@
 const passport = require("passport");
 const passportStrategy = require("../config/passport");
-const manager = require("./manager");
 const { startGame, updateGame, getGame, updateUserPlay } = require('../models/game');
+const manager = require("./manager");
 passportStrategy(passport);
 
 module.exports = (server) => {
@@ -116,6 +116,12 @@ module.exports = (server) => {
     socket.on('OUT_ROOM', async () => {
       console.log('out room');
       manager.outRoom(user.id);
+    });
+    socket.on('SEND_MESSAGE', (mess) => {
+      const room = manager.updateMess(user, mess);
+      if(room){
+        io.to(socket.room).emit("MESSAGE", [{username:user.username, mess: mess}]);
+      }
     })
   });
 };
