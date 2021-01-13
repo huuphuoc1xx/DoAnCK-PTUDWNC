@@ -2,10 +2,16 @@ const db = require("../utils/db");
 const utils = require("../utils/utils");
 
 const TABLE = "users";
-const changeFields = ["id", "username", "password", "name", "role"];
+const viewFields = ["id", "username", "password", "name", "email", "role", "status"]
+const changeFields = ["id", "username", "password", "name", "role", "email", "gg_uid", "status"];
 
-const { add, edit, findByCondition } = utils.commonModel(db, TABLE, changeFields, changeFields);
+const { add, edit, findByCondition } = utils.commonModel(db, TABLE, viewFields, changeFields);
 const findByUsername = (username) => findByCondition({ username }).then(res => res[0]);
+const findOrCreate = async (gg_uid, email, name) => {
+  const user = await findByCondition({ gg_uid }).then(res => res[0]);
+  if (user) return user.id;
+  return add({ username: email, email, name, gg_uid }).then(res => res.insertId);
+};
 
 const filterUser = ({ id, name, email, last_id, page_size }) => {
   const condition = ["TRUE"];
@@ -31,5 +37,6 @@ module.exports = {
   edit,
   findByCondition,
   findByUsername,
-  filterUser
+  filterUser,
+  findOrCreate
 };

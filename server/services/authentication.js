@@ -9,7 +9,10 @@ const ensureAuthenticated = (role) => function (req, res, next) {
     if (err || !user || (role && user.role != role)) {
       responseWithStatus(res, "UNAUTHORIZE");
     } else {
+      if (user.status == "block")
+        throw STATUS.BLOCK_USER;
       delete user.password;
+      delete user.status;
       req.user = user;
       next();
     }

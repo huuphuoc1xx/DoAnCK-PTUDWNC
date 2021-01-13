@@ -58,7 +58,7 @@ module.exports = (server) => {
     });
     socket.on("PLAY_CHESS", async (data) => {
       let squares = await getGame(data.room);
-      squares = squares[0].detail || "{}";
+      squares = squares.detail || "{}";
       squares = JSON.parse(squares);
       const exist = Object.values(squares).find((value) => value == data.chess);
       if (exist == undefined) {
