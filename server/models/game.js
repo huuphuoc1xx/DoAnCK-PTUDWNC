@@ -19,6 +19,8 @@ const updateUserPlay = (fieldChange, data, id) => {
   return db.edit('game', entity, { id: id });
 }
 
+const getRanks = async () => db.load(`SELECT username, cup, email FROM users ORDER BY cup DESC`);
+
 const filterGame = ({ id, player_o, player_x, last_id, page_size }) => {
   const condition = ["TRUE"];
   const params = [];
@@ -72,5 +74,6 @@ module.exports = {
   updateCup,
   updateWinChess,
   updateLoseChess,
-  getGameByUserId
+  getGameByUserId,
+  getRanks
 }
