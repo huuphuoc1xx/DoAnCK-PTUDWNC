@@ -51,7 +51,6 @@ module.exports = (server) => {
       io.to(socket.room).emit("USER_JOIN_GAME", manager.getRoomByOne(room));
     });
     socket.on("START_PLAY", async (room) => {
-      console.log("START_PLAY");
       if (manager.addPlayer(room, user, socket.id)) {
         const result = await updateUserPlay("player_o", user.id, room);
         const listUser = manager.getUserPlay(room);
@@ -59,7 +58,6 @@ module.exports = (server) => {
       }
     });
     socket.on('FAST_PLAY', async () => {
-      console.log('START_PLAY');
       const randomUser = await manager.getRandomUser(user, socket);
       console.log(randomUser.user);
       if (randomUser != undefined) {
@@ -71,6 +69,7 @@ module.exports = (server) => {
         manager.addRoom(room, user, socket.id);
         manager.addRoomExits(room, randomUser.user, randomUser.socket);
         const listUser = manager.getUserPlay(room);
+        io.to(socket.room).emit('JOIN_START','ok');
         io.to(socket.room).emit("START_FAST", { list: listUser, room: room });
       }
     })
