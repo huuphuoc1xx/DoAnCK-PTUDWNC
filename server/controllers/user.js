@@ -1,20 +1,24 @@
-const userBUS = require('../bus/user');
-const { handleReadRequest } = require('../utils/handleRequest');
+const userBUS = require('../models/user');
+const { handleReadRequest, handleWriteRequest } = require('../utils/handleRequest');
 
 module.exports = {
-  getAll: function (req, res, next) {
+  getById: function (req, res, next) {
+    res.json({ code: 0, data: { user: req.user } })
+  },
+  filter: function (req, res, next){
     handleReadRequest({
       req, res,
-      readFunc: userBUS.findAll,
-      resource: "users"
+      readFunc: userBUS.filterUser,
+      sourceInput:"query",
+      fields:["id","last_id","page_size"],
+      resource:"users"
     })
   },
-  getById: function (req, res, next) {
-    handleReadRequest({
-      req, res, sourceInput: "user",
-      fields: ["id"],
-      readFunc: userBUS.findByCondition,
-      resource: "user"
+  updateUser: function (req, res, next) {
+    handleWriteRequest({
+      req, res, sourceInput:"body", fields:["id","status"],
+      io: userBUS.changeStatus,
+      resource:"user"
     })
   }
 };

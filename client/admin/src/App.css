@@ -1,38 +1,185 @@
+@import url(https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
+@import url(https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css);
+
+body {
+  background: url(./asset/img/background.jpg) no-repeat fixed center;
+  background-size: cover;
+}
+
 .App {
+  max-height: 100vh;
+  height: 100vh;
+}
+
+.right-center {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.nav-bar {
+  background-color: #026aa7;
+}
+.icon {
+  color: white;
+  margin: auto;
+  font-size: 1.2em;
+}
+
+.logo {
+  opacity: 0.5;
+}
+
+.logo:hover {
+  opacity: 0.75;
+}
+
+.top-button {
+  box-sizing: border-box;
+  border-radius: 3px;
+  border: 0;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+  background-color: hsla(0, 0%, 100%, 0.3);
+  box-shadow: none;
+  color: #fff;
+  display: flex;
+  font-weight: 700;
+  height: 32px;
+  width: 32px;
+  line-height: 32px;
+  margin: 0 2px 0 2px;
+  padding: 0;
+  white-space: nowrap;
+  position: relative;
+}
+
+.top-button:hover,
+.top-circle-btn:hover,
+.side-bar-item:hover {
+  opacity: 0.8;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.top-circle-btn {
+  align-items: center;
+  background-color: #dfe1e6;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 0;
+  border-radius: 100%;
+  box-sizing: border-box;
+  color: #172b4d;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 32px;
+  opacity: 1;
+  height: 32px;
+  width: 32px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.right-nav {
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 100%;
+  justify-content: flex-end;
+}
+a:hover {
+  text-decoration: none;
+}
+
+.fill {
+  height: fit-content;
+  width: 100%;
+}
+
+.side-bar {
+  min-width: 200px;
+  min-height: 93vh;
+  background: #012c46;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.side-bar-item {
+  align-items: center;
+  margin: 2px;
+  width: 98%;
+  height: 40px;
+  background-color: #dfe1e6;
+  color: #172b4d;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.item-disable {
+  opacity: 0.6;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.main-container {
+  min-height: 1pc;
+}
+
+.custom-model {
+  width: 80vw;
+  max-width: none;
+}
+
+.side-frame {
+  border: 1px solid black;
+  display: flex;
+  width: 16.66666666%;
+  min-height: 100%;
+}
+
+.game-frame {
+  border: 2px solid gray;
+  margin: 1px;
+  display: flex;
+  justify-content: center;
+  width: 66.6666666%;
+  height: fit-content;
+}
+
+.board {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: fit-content;
+  width: 80vh;
+  margin: 1px;
+  border: 1px solid black;
+}
+
+.game{
+  display: flex;
+  flex-direction: row;
+}
+
+.cell{
+  width: 4vh;
+  height: 4vh;
+  border: 1px solid black;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+.row-cell{
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.chat, .history{
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  overflow: auto;
 }

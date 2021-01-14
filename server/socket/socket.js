@@ -1,10 +1,8 @@
 const passport = require("passport");
 const passportStrategy = require("../config/passport");
+const { startGame, updateGame, getGame, updateUserPlay, getListMess, getInfor, updateCup, updateWinChess, updateLoseChess} = require('../models/game');
 const manager = require("./manager");
-const { startGame, updateGame, getGame, updateUserPlay } = require('./useDatabse');
 passportStrategy(passport);
-const cors = require("cors");
-const { authenticate } = require("passport");
 
 module.exports = (server) => {
   const socket = require("socket.io");
@@ -29,109 +27,220 @@ module.exports = (server) => {
   io.on("connection", (socket) => {
     const user = socket.request.user;
     manager.addUser(user, socket.id);
-    socket.on('USER_JOIN_SOCKET', ({ user }) => {
-      io.emit("UPDATE_LIST_USER", manager.getListOnline())
+    socket.on("USER_JOIN_SOCKET", ({ user }) => {
+      io.emit("UPDATE_LIST_USER", manager.getListOnline());
     });
     //lúc mới bắt đầu
-    socket.on('START_GAME', async () => {
+    socket.on("START_GAME", async () => {
       const room = await startGame({ username_x: user.id });
       manager.addRoom(room, user, socket.id);
       socket.room = room;
       socket.join(room);
-      io.to(socket.room).emit('USER_PLAY_GAME',{ list:[user], room: room });
-      io.to(socket.room).emit('USER_JOIN_GAME', [user]);
+      io.to(socket.room).emit("USER_PLAY_GAME", { list: [user], room: room });
+      io.to(socket.room).emit("USER_JOIN_GAME", [user]);
     });
-    socket.on('JOIN_GAME', async (room) => {
+    socket.on("JOIN_GAME", async (room) => {
       room = parseInt(room);
       manager.addRoomExits(room, user, socket.id);
       socket.room = room;
       socket.join(room);
-      socket.emit('USER_PLAY_GAME', {list: manager.getUserPlay(room), room: room});
-      io.to(socket.room).emit('USER_JOIN_GAME', manager.getRoomByOne(room));
+      socket.emit("USER_PLAY_GAME", {
+        list: manager.getUserPlay(room),
+        room: room,
+      });
+      io.to(socket.room).emit("USER_JOIN_GAME", manager.getRoomByOne(room));
     });
-    socket.on('START_PLAY', async (room) => {
-      if(manager.addPlayer(room, user, socket.id)){
-        const result = updateUserPlay('player_o', user.id, room);
-        io.to(socket.room).emit('USER_PLAY_GAME',{list: [user], room: room });
+    socket.on("START_PLAY", async (room) => {
+      if (manager.addPlayer(room, user, socket.id)) {
+        const result = await updateUserPlay("player_o", user.id, room);
+        const listUser = manager.getUserPlay(room);
+        io.to(socket.room).emit("USER_PLAY_GAME", { list: listUser, room: room });
+      }
+    });
+    socket.on('FAST_PLAY', async () => {
+      const randomUser = await manager.getRandomUser(user, socket);
+      console.log(randomUser.user);
+      if (randomUser != undefined) {
+        const room = await startGame({ username_x: user.id });
+        randomUser.socket.room = room;
+        randomUser.socket.join(room);
+        socket.room = room;
+        socket.join(room);
+        manager.addRoom(room, user, socket.id);
+        manager.addRoomExits(room, randomUser.user, randomUser.socket);
+        const listUser = manager.getUserPlay(room);
+        io.to(socket.room).emit('JOIN_START','ok');
+        io.to(socket.room).emit("START_FAST", { list: listUser, room: room });
       }
     })
-    socket.on('PLAY_CHESS', async (data) => {
+    socket.on("PLAY_CHESS", async (data) => {
       let squares = await getGame(data.room);
-      squares = squares[0].detail||'{}';
+      squares = squares.detail || "[]";
       squares = JSON.parse(squares);
-      const exist = Object.values(squares).find(value => value==data.chess)
-      if(exist==undefined)
-      {
-        const checkCurState = manager.checkCurState(data.room, data.chess, user);
-        const count = Object.keys(squares).length
-        if(checkCurState){
-          io.to(socket.room).emit('GET_PLAY_CHESS', {chess: data.chess, value:checkCurState%2?'O':'X'});
-          const winner = checkWin(squares, data.chess, checkCurState%2?'O':'X');
-          squares[count] = data.chess;
+      const exist = squares.find((value) => value == data.chess);
+      if (exist == undefined) {
+        const checkCurState = manager.checkCurState(
+          data.room,
+          user
+        );
+        if (checkCurState) {
+          const turn = checkCurState == 1 ? "X" : "O";
+          io.to(socket.room).emit("GET_PLAY_CHESS", {
+            chess: data.chess,
+            value: turn,
+          });
+          const winner = checkWin(
+            squares,
+            data.chess,
+            turn
+          );
+          squares.push(data.chess);
           const update = {
             detail: JSON.stringify(squares),
-            result: winner?checkCurState%2?'O':'X':null
-          }
-          let result = await updateGame(update, socket.room);
-          if(winner)
-          {
-            io.to(socket.room).emit('WIN_GAME', {username: user.username});
+            result: winner ? (turn) : null,
+          };
+          await updateGame(update, socket.room);
+          if (winner != null) {
+            io.to(socket.room).emit("WIN_GAME", { username: user.username, list: winner });
+            const listUser = manager.getUserPlay(data.room);
+            const loser = listUser.find(userPlay => userPlay.userId!=user.id);
+            handleAfterWin(user.id, loser.userId);
             manager.updateStatus(data.room);
           }
         }
       }
     });
-    socket.on('OUT_GAME', async () => {
-      const result = manager.deleteRoom(user);
-      console.log(result);
-    })
-    socket.on('GET_NEW_CHESSBOARD', async () => {
+    socket.on("GET_NEW_CHESSBOARD", async () => {
       const result = manager.getRoom();
-      socket.emit('GET_NEW_CHESSBOARD', result);
+      socket.emit("GET_NEW_CHESSBOARD", result);
     });
+    socket.on('OUT_ROOM', async () => {
+      const room = manager.getRoomById(user.id);
+      const listUser = manager.getUserPlay(room.room);
+      const loser = listUser.find(userPlay => userPlay.userId==user.id);
+      const winner = listUser.find(userPlay => userPlay.userId!=user.id)
+      if(loser!=undefined) handleAfterWin(winner.userId, loser.userId);
+      manager.outRoom(user.id, updateUserPlay);
+    });
+    socket.on('SEND_MESSAGE', (mess) => {
+      const room = manager.updateMess(user, mess, getListMess, updateUserPlay);
+      if (room) {
+        io.to(socket.room).emit("MESSAGE", [{ username: user.username, mess: mess }]);
+      }
+    })
   });
-}
+};
 
+const handleAfterWin = async (winnerId, loserId) => {
+  const dataWinner = await getInfor(winnerId);
+  const dataLoser = await getInfor(loserId);
+  console.log(dataLoser);
+  updateWinChess(winnerId, dataLoser.win +1);
+  updateLoseChess(loserId, dataLoser.lose+1);
+  if (dataWinner.cup < dataLoser) {
+    updateCup(winnerId, dataWinner.cup + 2);
+    updateCup(loserId, dataLoser.cup - 2);
+    return;
+  }
+  const cupLose = dataLoser.cup?dataLoser.cup-1:0;
+  updateCup(winnerId, dataWinner.cup+1);
+  updateCup(loserId, cupLose);
+
+}
 const checkWin = (squaresObject, chess, type) => {
-
-  const squares = Array(20).fill(null);
-  for(let i=0; i<20;i++)
-  squares[i] = Array(20).fill(null);
-  Object.keys(squaresObject).map((key) =>  {
-    return squares[parseInt(squaresObject[key]/20)][squaresObject[key]%20] = Number(key)%2?'O':'X';
+  const squares = {};
+  squaresObject.forEach((item, index) => {
+    const x = Math.floor(item / 20), y = item % 20;
+    squares[x] = squares[x] || {};
+    squares[x][y] = Number(index) % 2 ? 'O' : 'X';
   });
-  const result = Array(4);
-  result[0] = checkRow(squares, parseInt(chess/20), chess%20 - 4, chess%20, type);
-  result[1] = checkCol(squares, chess%20, parseInt(chess/20) - 4, parseInt(chess/20), type);
-  result[2] = checkCheo1(squares, parseInt(chess/20) - 4 , chess%20 - 4, chess%20, type);
-  result[3] = checkCheo2(squares, parseInt(chess/20) + 4, chess%20 - 4, chess%20, type);
-  return result.find(element => element==4)!=undefined?true:false;
-}
-const checkRow = (square, i, j, col,  type) => {
-  if(j > col+4) return 0;
-  if(j < 0) return checkRow(square, i, j+1,  col,  type) + 0;
-  if(j >= 20 ) return 0;
-  const count = square[i][j]==type?1:0
-  return (checkRow(square, i, j+1,  col,  type) + count);
-}
-const checkCol = (square, i, j, col,  type) => {
-  if(j > col+4) return 0;
-  if(j < 0) return checkCol(square, i, j+1,  col,  type);
-  if(j >= 20 ) return 0;
-  const count = square[j][i]==type?1:0;
-  return checkCol(square, i, j+1,  col,  type) + count;
-}
-const checkCheo1 = (square, i, j, col, type) => {
-  if(j > col+4) return 0;
-  if(i<0||j<0) return checkCheo1(square, i+1, j+1, col, type);
-  if(i>=20||j>=20) return 0;
-  const count = square[i][j]==type?1:0;
-  return checkCheo1(square, i+1, j+1, col, type) + count;
-}
-const checkCheo2 = (square, i, j, col, type) => {
-  if(j > col+4) return 0;
-  if(i<0||j>=20) return 0;
-  if(i>=20||j<0)  return checkCheo2(square, i-1, j+1, col, type);
-  const count = square[i][j]==type?1:0;
-  return checkCheo2(square, i-1, j+1, col, type) + count;
-}
+  const curPos = { x: Math.floor(chess / 20), y: chess % 20 };
+  const args = [squares, curPos, type];
+  return checkRow(...args) || checkCol(...args) || checkDiag(...args) || checkSubDiag(...args);
+};
+const checkRow = (square, curPos, type) => {
+  const maxX = Math.min(19, curPos.x + 4);
+  const minX = Math.max(0, curPos.x - 4);
+  let list = [curPos];
+  for (let x0 = curPos.x - 1; x0 >= minX; x0--) {
+    if (!square[x0] || square[x0][curPos.y] != type)
+      break;
+    list = [{ x: x0, y: curPos.y }, ...list];
+  }
+  if (list.length == 5)
+    return list;
+  for (let x0 = curPos.x + 1; x0 <= maxX; x0++) {
+    if (!square[x0] || square[x0][curPos.y] != type)
+      break;
+    list.push({ x: x0, y: curPos.y });
+    if (list.length == 5)
+      break;
+  }
+  return list.length == 5 ? list : null;
+};
+const checkCol = (square, curPos, type) => {
+  const maxY = Math.min(19, curPos.y + 4);
+  const minY = Math.max(0, curPos.y - 4);
+  let list = [curPos];
+  for (let y0 = curPos.y - 1; y0 >= minY; y0--) {
+    if (!square[curPos.x] || square[curPos.x][y0] != type)
+      break;
+    list = [{ x: curPos.x, y: y0 }, ...list];
+  }
+  if (list.length == 5)
+    return list;
+
+  for (let y0 = curPos.y + 1; y0 <= maxY; y0++) {
+    if (!square[curPos.x] || square[curPos.x][y0] != type)
+      break;
+    list.push({ x: curPos.x, y: y0 });
+    if (list.length == 5)
+      break;
+  }
+  return list.length == 5 ? list : null;
+};
+const checkDiag = (square, curPos, type) => {
+  const maxX = Math.min(19, curPos.x + 4);
+  const maxY = Math.min(19, curPos.y + 4);
+  const minX = Math.max(0, curPos.x - 4);
+  const minY = Math.max(0, curPos.y - 4);
+  let list = [curPos];
+  for (let x0 = curPos.x - 1, y0 = curPos.y - 1; y0 >= minY, x0 >= minX; y0--, x0--) {
+    if (!square[x0] || square[x0][y0] != type)
+      break;
+    list = [{ x: x0, y: y0 }, ...list];
+  }
+  if (list.length == 5)
+    return list;
+
+  for (let x0 = curPos.x + 1, y0 = curPos.y + 1; y0 <= maxY, x0 <= maxX; y0++, x0++) {
+    if (!square[x0] || square[x0][y0] != type)
+      break;
+    list.push({ x: x0, y: y0 });
+    if (list.length == 5)
+      break;
+  }
+  return list.length == 5 ? list : null;
+};
+const checkSubDiag = (square, curPos, type) => {
+  const maxX = Math.min(19, curPos.x + 4);
+  const maxY = Math.min(19, curPos.y + 4);
+  const minX = Math.max(0, curPos.x - 4);
+  const minY = Math.max(0, curPos.y - 4);
+  let list = [curPos];
+  for (let x0 = curPos.x - 1, y0 = curPos.y + 1; y0 >= minY, x0 <= maxX; y0--, x0++) {
+    if (!square[x0] || square[x0][y0] != type)
+      break;
+    list = [{ x: x0, y: y0 }, ...list];
+  }
+  if (list.length == 5)
+    return list;
+  for (let x0 = curPos.x + 1, y0 = curPos.y - 1; y0 <= maxY, x0 >= minX; y0--, x0++) {
+    if (!square[x0] || square[x0][y0] != type)
+      break;
+    list.push({ x: x0, y: y0 });
+    if (list.length == 5)
+      break;
+  }
+  return list.length == 5 ? list : null;
+};

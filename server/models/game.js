@@ -35,7 +35,7 @@ const filterGame = ({ id, player_o, player_x, last_id, page_size }) => {
     params.push(last_id);
   }
   return db.load(
-    `SELECT id, player_x, player_o, IF(result="X",player_x, IF(result="O",player_o, NULL)) winner, detail FROM game
+    `SELECT id, player_x, player_o, IF(result="X",player_x, IF(result="O",player_o, NULL)) winner, detail, message FROM game
       WHERE ${condition.join(" AND ")} 
       ORDER BY id DESC 
       LIMIT ${Math.max(+page_size || 0, 10)}`, params);

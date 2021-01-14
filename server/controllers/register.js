@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-const userBUS = require("../bus/user");
+const userBUS = require("../models/user");
 const { STATUS } = require("../utils/constant");
 const { dataMapper, responseWithStatus } = require("../utils/utils");
 const jwt = require("jsonwebtoken");

@@ -1,4 +1,4 @@
-const userBUS = require('../bus/user');
+const userBUS = require('../models/user');
 const { handleWriteRequest } = require('../utils/handleRequest');
 
 module.exports = {

@@ -25,6 +25,10 @@ module.exports = {
     UNCHANGE: {
       code: 4,
       message: "Data unchange"
+    },
+    BLOCK_USER:{
+      code:5,
+      message: "User has been block"
     }
   }
 }

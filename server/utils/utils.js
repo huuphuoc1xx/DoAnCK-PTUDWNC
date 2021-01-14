@@ -22,13 +22,10 @@ module.exports = {
   commonModel: function (db, TABLE, viewFields, changeFields) {
     return {
       findAll: () => db.load(`SELECT ${viewFields} FROM ${TABLE}`),
-      findByCondition: async (condition) => {
-        const row = await db.load(
-          `SELECT ${viewFields} FROM ${TABLE} WHERE ?`,
-          condition
-        );
-        return row[0];
-      },
+      findByCondition: (condition) => db.load(
+        `SELECT ${viewFields} FROM ${TABLE} WHERE ?`,
+        condition
+      ),
       add: (entity) => {
         const addData = this.dataMapper(entity, changeFields);
         return db.add(TABLE, addData);
