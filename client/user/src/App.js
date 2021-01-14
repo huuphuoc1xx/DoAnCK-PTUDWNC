@@ -7,6 +7,8 @@ import AuthProvider from "./provider/AuthProvider";
 import { history } from './helpers/history';
 import { PlayGame } from './component/playGame/playGame';
 import { ListRoom } from './component/listRoom/listRoom';
+import  History  from './component/History/History';
+import Ranks from './component/ranks/ranks';
 import Axios from "axios";
 import "./App.css";
 
@@ -27,6 +29,12 @@ function App() {
             </Route>
             <Route exact path='/chessboard'>
               <ListRoom />
+            </Route>
+            <Route exact path="/history">
+              <History />
+            </Route>
+            <Route exact path="/rank">
+              <Ranks />
             </Route>
             <Route exact path="/">
               <Home />

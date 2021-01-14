@@ -22,6 +22,7 @@ const jwtStragegy = new JwtStragegy(jwtOptions, function (payload, done) {
       if (!user) {
         return done(new Error("User not found!"));
       } else {
+        
         return done(null, user);
       }
     })

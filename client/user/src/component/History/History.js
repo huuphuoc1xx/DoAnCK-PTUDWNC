@@ -1,13 +1,13 @@
 import Axios from "axios";
 import React, { useEffect, useState } from "react";
-import DataTable from "../../../../user/src/component/History/node_modules/react-data-table-component";
+import DataTable from "react-data-table-component";
 import config from "../../config/config.json";
 import { Button, Form, Pagination } from "react-bootstrap";
 import ShowDetail from "./ShowDetail";
-
+import Nav from "../Nav";
 const columns = [
   {
-    name: "User  ID",
+    name: "ID",
     selector: "id",
     minWidth: "50px",
     maxWidth: "100px",
@@ -21,8 +21,8 @@ const columns = [
     selector: "player_o"
   },
   {
-    name: "Winner",
-    selector: "winner"
+    name: "Result",
+    selector: "result"
   },
   {
     name: "Detail",
@@ -37,7 +37,7 @@ function History() {
   const [filterData, setFilterData] = useState(false);
   useEffect(() => {
     Axios.get(
-      `${config.dev.path}/history`, {
+      `${config.base_path}/history`, {
       params: {
         ...filterData,
         last_id: lastIdStack[lastIdStack.length - 1]
@@ -45,6 +45,7 @@ function History() {
     }
     ).then((res) => {
       if (res.data.code === 0) {
+        console.log("LICH_SU", res.data.data.games);
         setHistory(res.data.data.games);
       }
     });
@@ -63,37 +64,12 @@ function History() {
     setLastIdStack(temp);
   };
 
-  const filter = () => {
-    setFilterData(filtData);
-    setLastIdStack([0]);
-  }
-
   return (
     <div>
-      <div className="d-flex">
+        <Nav/>
+      <div className="d-flex" style={{"marginLeft":"10px"}}>
         <div className="column-lg-4 column-md-6 column-sm-12 m-2 trans-form">
-          <Form.Control
-            type="text"
-            placeholder="Player X"
-            value={filtData.player_x || ""}
-            onChange={(e) => {
-              if (/^[0-9]*$/.test(e.target.value))
-                setFiltData({ ...filtData, player_x: e.target.value });
-            }}
-          />
-          <Form.Control
-            type="text"
-            placeholder="Player O"
-            value={filtData.player_o || ""}
-            onChange={(e) => {
-              if (/^[0-9]*$/.test(e.target.value))
-                setFiltData({ ...filtData, player_o: e.target.value });
-            }}
-          />
-          <div className="d-flex justify-content-end mt-2">
-            <Button variant="dark" onClick={filter}>Lọc</Button>
-          </div>
-        </div>
+       </div>
       </div>
       <DataTable
         data={history}
@@ -101,7 +77,7 @@ function History() {
         striped
         highlightOnHover
       ></DataTable>
-      <div className="d-flex justify-content-end mt-1 mr-2">
+      <div className="d-flex justify-content-end mt-1 mr-2" style={{"marginLeft":"10px"}}>
         <Pagination>
           <Pagination.First onClick={() => setLastIdStack([0])} />
           <Pagination.Prev onClick={previousPage} />

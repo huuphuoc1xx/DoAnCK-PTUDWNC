@@ -31,9 +31,10 @@ export function playReduce(state = {},action){
             state.room = null;
             return {
                 ...state,
+                startFast: false
              }
         case PLAYGAMECONTANTS.START_FAST:
-            console.log("START_LAY", action.data.list);
+            console.log("START_pLAY", action.data.list);
             state.listUserPlay = [...state.listUserPlay, ...action.data.list];
             state.room = action.data.room
             return history.push('/playgame');
@@ -75,6 +76,11 @@ export function playReduce(state = {},action){
             return{
                 ...state,
                 listMessage: [...state.listMessage, ...action.data]
+            }
+        case PLAYGAMECONTANTS.JOIN_START:
+            return {
+                ...state,
+                startFast:true
             }
         default:
             return {

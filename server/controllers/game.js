@@ -1,4 +1,4 @@
-const { filterGame } = require("../models/game");
+const { filterGame, getGameByUserId, getRanks } = require("../models/game");
 const { handleReadRequest } = require("../utils/handleRequest")
 
 module.exports = {
@@ -10,4 +10,20 @@ module.exports = {
       resource: "games"
     });
   },
+  getGameById: (req, res) => {
+    handleReadRequest({
+      req,res, fields: ['id'],
+      sourceInput: "user",
+      readFunc: getGameByUserId,
+      resource: "games"
+    })
+  },
+  getRankUser: (req, res) => {
+    handleReadRequest({
+      req,res, fields : [],
+      sourceInput: '',
+      readFunc: getRanks,
+      resource: "user"
+    })
+  }
 }

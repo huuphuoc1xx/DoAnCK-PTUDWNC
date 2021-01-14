@@ -9,7 +9,6 @@ module.exports = {
 
     try {
       const info = await readFunc(obj);
-
       const data = {};
       data[resource] = info;
       utils.responseWithData(res, data)

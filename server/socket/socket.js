@@ -59,7 +59,6 @@ module.exports = (server) => {
       }
     });
     socket.on('FAST_PLAY', async () => {
-      console.log('START_PLAY');
       const randomUser = await manager.getRandomUser(user, socket);
       console.log(randomUser.user);
       if (randomUser != undefined) {
@@ -71,6 +70,7 @@ module.exports = (server) => {
         manager.addRoom(room, user, socket.id);
         manager.addRoomExits(room, randomUser.user, randomUser.socket);
         const listUser = manager.getUserPlay(room);
+        io.to(socket.room).emit('JOIN_START','ok');
         io.to(socket.room).emit("START_FAST", { list: listUser, room: room });
       }
     })
@@ -143,8 +143,9 @@ const handleAfterWin = async (winnerId, loserId) => {
     updateCup(loserId, dataLoser.cup - 2);
     return;
   }
-  updateCup(winnerId, dataWinner.cup-1);
-  updateCup(loserId, dataLoser.cup+1);
+  const cupLose = dataLoser.cup?dataLoser.cup-1:0;
+  updateCup(winnerId, dataWinner.cup+1);
+  updateCup(loserId, cupLose);
 
 }
 const checkWin = (squaresObject, chess, type) => {

@@ -30,6 +30,14 @@ function Home(props) {
     dispatch({ type: ACTIONSOCKET.SUBSCRIBE, event: PLAYGAMECONTANTS.START_FAST });
     dispatch({ type: ACTIONSOCKET.EMIT, event: PLAYGAMECONTANTS.FAST_PLAY });
   }
+  const historyPlay = (e) => {
+    e.preventDefault();
+    history.push('/history');
+  }
+  const CUP = (e) => {
+    e.preventDefault();
+    history.push('/rank');
+  }
   return (
     <AuthProvider>
       <Nav />
@@ -48,6 +56,8 @@ function Home(props) {
             <Button variant="dark" onClick={findGame} className="lobby-btn">Danh sách bàn cờ</Button>
             <Button variant="dark" onClick = {fastPlay} className="lobby-btn">Chơi Nhanh</Button>
             <Button variant="dark" className="lobby-btn">Mời người chơi</Button>
+            <Button variant ='dark' className="lobby-btn" onClick = {historyPlay}>Lich sử chơi</Button>
+            <Button variant ='dark' className="lobby-btn" onClick = {CUP}>Xếp hạng người chơi</Button>
           </div>
         </div>
         <ListUser />
