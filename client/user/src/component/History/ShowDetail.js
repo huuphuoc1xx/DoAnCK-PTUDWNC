@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Pagination } from "react-bootstrap";
-import   usePopup   from "../../provider/PopupProvider";
+import { usePopup } from "../../provider/PopupProvider";
 
 function ShowDetail({ info }) {
-  const   showPopup  = usePopup();
-  console.log("SHOWW_POPUP",'l');
+  const { showPopup } = usePopup();
   return (
     <Button
       variant="secondary"

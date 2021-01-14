@@ -99,3 +99,61 @@ body{
 a:hover{
   text-decoration: none;
 }
+
+
+.side-frame {
+  border: 1px solid black;
+  display: flex;
+  width: 16.66666666%;
+  min-height: 100%;
+}
+
+.game-frame {
+  border: 2px solid gray;
+  margin: 1px;
+  display: flex;
+  justify-content: center;
+  width: 66.6666666%;
+  height: fit-content;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 80vh;
+  margin: 1px;
+  border: 1px solid black;
+}
+
+.game{
+  display: flex;
+  flex-direction: row;
+}
+
+.cell{
+  width: 4vh;
+  height: 4vh;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.row-cell{
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+}
+
+.chat, .history{
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  overflow: auto;
+}
+
+.custom-model {
+  width: 80vw;
+  max-width: none;
+}

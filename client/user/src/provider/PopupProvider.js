@@ -11,7 +11,7 @@ function PopupProvider(props) {
 
     return (
         <PopupContext.Provider value={{ popup, showPopup }} >
-           
+           {props&&props.children}
             <Modal show={popup != false} onHide={() => showPopup(false)} dialogClassName="custom-model" contentClassName="custom-dialog">
                 {popup}
             </Modal>

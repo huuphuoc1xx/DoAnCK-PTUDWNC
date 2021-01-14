@@ -63,13 +63,12 @@ const getInfor = (id) => db.load(`SELECT cup, lose, win FROM users WHERE id = ?`
 const updateCup = (userId, cup) => db.edit('users', { cup: cup }, { id: userId });
 const updateWinChess = (userId, win) => db.edit('users', { win: win }, { id: userId });
 const updateLoseChess = (userId, lose) => db.edit('users', { lose: lose }, { id: userId });
-const getListMess = (room) => db.load(`SELECT message FROM game WHERE id =?`, [room]).then(res => res[0] && res[0].message);
 
-const getInfor = (id) => db.load(`SELECT cup, lose, win FROM users WHERE id = ?`, [id]).then(res => res[0]);
+// const getInfor = (id) => db.load(`SELECT cup, lose, win FROM users WHERE id = ?`, [id]).then(res => res[0]);
 
-const updateCup = (userId, cup) => db.edit('users',{cup:cup},{id:userId});
-const updateWinChess = (userId, win) => db.edit('users', {win: win}, {id: userId});
-const updateLoseChess = (userId, lose) => db.edit('users',{lose: lose}, {id: userId});
+// const updateCup = (userId, cup) => db.edit('users',{cup:cup},{id:userId});
+// const updateWinChess = (userId, win) => db.edit('users', {win: win}, {id: userId});
+// const updateLoseChess = (userId, lose) => db.edit('users',{lose: lose}, {id: userId});
 module.exports = {
   startGame,
   updateGame,

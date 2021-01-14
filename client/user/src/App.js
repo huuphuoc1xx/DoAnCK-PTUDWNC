@@ -7,15 +7,16 @@ import AuthProvider from "./provider/AuthProvider";
 import { history } from './helpers/history';
 import { PlayGame } from './component/playGame/playGame';
 import { ListRoom } from './component/listRoom/listRoom';
-import  History  from './component/History/History';
+import History from './component/History/History';
 import Ranks from './component/ranks/ranks';
 import Axios from "axios";
 import "./App.css";
+import PopupProvider from "./provider/PopupProvider";
 
 Axios.defaults.withCredentials = true;
 function App() {
   return (
-    <div style={{ "margin": "0", height:"100%" }}>
+    <div style={{ "margin": "0", height: "100%" }}>
       <Router history={history}>
         <Switch>
           <Route exact path="/register">
@@ -31,7 +32,9 @@ function App() {
               <ListRoom />
             </Route>
             <Route exact path="/history">
-              <History />
+              <PopupProvider>
+                <History />
+              </PopupProvider>
             </Route>
             <Route exact path="/rank">
               <Ranks />
