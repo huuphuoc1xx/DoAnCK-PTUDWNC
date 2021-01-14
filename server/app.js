@@ -14,6 +14,7 @@ const loginRouter = require('./routes/login');
 const registerRouter = require('./routes/register');
 const updateProfileRouter = require('./routes/update-profile');
 const adminRouter = require('./routes/admin');
+const historyRouter = require('./routes/history');
 const { STATUS } = require('./utils/constant');
 
 const app = express();
@@ -63,7 +64,7 @@ app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/update-profile', updateProfileRouter);
 app.use('/admin', adminRouter);
-
+app.use('/history', historyRouter);
 app.use((req, res, next, err) => {
 	console.log(err);
 	if (isNaN(err.code))

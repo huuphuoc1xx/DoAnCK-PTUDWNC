@@ -38,13 +38,29 @@ const filterGame = ({ id, player_o, player_x, last_id, page_size }) => {
       ORDER BY id DESC 
       LIMIT ${Math.max(+page_size || 0, 10)}`, params);
 }
+const getGameByUserId = async ({ id }) => {
+  const listChess = await db.load(`SELECT id, player_x, player_o, result, detail, message FROM game WHERE player_x = ? OR player_o = ?  `, [id, id]);
+  const listChessNotNull = listChess.filter(chess => chess.result != null);
+  const listUser = await db.load(`SELECT id, username FROM users`);
+  listChessNotNull.forEach(chess => {
+    listUser.forEach(user => {
+      if (user.id == chess.player_o) {
+        chess.player_o = user.username;
+      }
+      if (user.id == chess.player_x) {
+        chess.player_x = user.username;
+      }
+    })
+  });
+  return listChessNotNull;
+}
 const getListMess = (room) => db.load(`SELECT message FROM game WHERE id =?`, [room]).then(res => res[0] && res[0].message);
 
 const getInfor = (id) => db.load(`SELECT cup, lose, win FROM users WHERE id = ?`, [id]).then(res => res[0]);
 
-const updateCup = (userId, cup) => db.edit('users',{cup:cup},{id:userId});
-const updateWinChess = (userId, win) => db.edit('users', {win: win}, {id: userId});
-const updateLoseChess = (userId, lose) => db.edit('users',{lose: lose}, {id: userId});
+const updateCup = (userId, cup) => db.edit('users', { cup: cup }, { id: userId });
+const updateWinChess = (userId, win) => db.edit('users', { win: win }, { id: userId });
+const updateLoseChess = (userId, lose) => db.edit('users', { lose: lose }, { id: userId });
 module.exports = {
   startGame,
   updateGame,
@@ -55,5 +71,6 @@ module.exports = {
   getInfor,
   updateCup,
   updateWinChess,
-  updateLoseChess
+  updateLoseChess,
+  getGameByUserId
 }
