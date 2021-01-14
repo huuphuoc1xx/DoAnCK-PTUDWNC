@@ -65,7 +65,7 @@ function GameDetail({ info }) {
   };
   return (
     <>
-      <Modal.Header closeButton> GAME ID: {info.id}</Modal.Header>
+      <Modal.Header closeButton> GAME ID: {info.id} PlayerX: {info.player_x} PlayerO: {info.player_o}</Modal.Header>
       <Modal.Body className="game">
         <div className="side-frame">
           <div className="chat">

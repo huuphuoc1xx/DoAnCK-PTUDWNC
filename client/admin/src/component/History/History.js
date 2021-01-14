@@ -7,7 +7,7 @@ import ShowDetail from "./ShowDetail";
 
 const columns = [
   {
-    name: "User  ID",
+    name: "Game ID",
     selector: "id",
     minWidth: "50px",
     maxWidth: "100px",
